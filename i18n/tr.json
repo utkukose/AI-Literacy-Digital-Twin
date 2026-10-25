@@ -1,0 +1,110 @@
+{
+  "locale": "tr",
+  "locale_name": "Türkçe",
+  "app": {
+    "name": "SDÜ Yapay Zeka Okuryazarlığı",
+    "short_name": "YZ Okuryazarlığı",
+    "by": "YAZEM (Yapay Zeka Uygulama ve Araştırma Merkezi)"
+  },
+  "auth": {
+    "email_label": "Üniversite e-posta adresin",
+    "email_hint": "@sdu.edu.tr veya @stud.sdu.edu.tr",
+    "send_code": "Kod gönder",
+    "code_label": "E-postana gelen 6 haneli kod",
+    "verify": "Doğrula ve giriş yap",
+    "code_sent": "Kodu gönderdik. Birkaç dakika içinde gelmezse istenmeyen e-posta klasörüne bak.",
+    "code_invalid": "Kod hatalı ya da süresi dolmuş.",
+    "domain_rejected": "Yalnızca SDÜ e-posta adresleriyle giriş yapılabilir.",
+    "rate_limited": "Çok fazla deneme yapıldı. Biraz bekleyip tekrar dene.",
+    "sign_out": "Çıkış yap"
+  },
+  "role": {
+    "student": "Öğrenci",
+    "academic": "Akademik personel",
+    "admin_staff": "İdari personel",
+    "declare_prompt": "Görevin nedir?"
+  },
+  "unit": {
+    "label": "Birimin",
+    "search_placeholder": "Fakülte, bölüm ya da daire adı yaz",
+    "change": "Birimi değiştir",
+    "change_limited": "Birim bilgisini dönem içinde bir kez değiştirebilirsin.",
+    "not_set": "Birim seçilmedi"
+  },
+  "dimension": {
+    "prompt_design": "Görev ve İstem Tasarımı",
+    "verification": "Doğrulama ve Halüsinasyon Tespiti",
+    "integrity": "Atıf ve Akademik Dürüstlük",
+    "privacy": "Veri Mahremiyeti",
+    "manipulation": "Manipülasyon Direnci",
+    "op_security": "Kurumsal Bilgi Güvenliği",
+    "boundaries": "Sınır ve Yanlılık Bilinci"
+  },
+  "twin": {
+    "title": "Dijital İkizin",
+    "subtitle": "Çözdüğün her vakayla ikizin seni biraz daha iyi tanır.",
+    "no_data": "Henüz veri yok",
+    "attempts": "{n} vaka",
+    "calibration": "Kendini tanıma",
+    "calibration_help": "Ne kadar doğru bildiğini değil, ne bildiğini ne kadar iyi kestirdiğini ölçer.",
+    "points": "Puan",
+    "strongest": "En güçlü olduğun alan",
+    "focus": "Bu hafta buna odaklan"
+  },
+  "case": {
+    "weekly": "Haftanın Vakası",
+    "core": "Temel Vaka",
+    "start": "Başla",
+    "continue": "Devam et",
+    "closes_in": "Kapanmasına {n} gün",
+    "archived": "Arşiv: Puan değeri düşük",
+    "none_available": "Şu an sana açık bir vaka yok. Yeni vakalar yayımlandıkça burada görünür.",
+    "estimated": "yaklaşık {n} dakika"
+  },
+  "step": {
+    "next": "Devam",
+    "submit": "Gönder",
+    "of": "{i} / {n}",
+    "confidence_label": "Bu cevaptan ne kadar eminsin?",
+    "confidence_help": "Çok emin olup yanılmak, emin olmadığını söylemekten daha pahalıya patlar.",
+    "span_select": "Metinde istenen yerleri işaretle",
+    "source_verify": "Her künye için karar ver",
+    "source_real": "Gerçek",
+    "source_fake": "Uydurma",
+    "pattern_check": "Metni yeniden yaz",
+    "chars_left": "{n} karakter kaldı",
+    "reasoned_choice": "Seçimini ve gerekçesini belirt",
+    "reason_label": "Neden?",
+    "branching": "Kararını ver"
+  },
+  "feedback": {
+    "correct": "Doğru",
+    "partial": "Kısmen doğru",
+    "incorrect": "Yanlış",
+    "points_gained": "+{n} puan",
+    "points_lost": "{n} puan",
+    "twin_moved": "İkizin güncellendi",
+    "debrief": "Çözüm notu",
+    "debrief_locked": "Çözüm notu vaka kapanınca açılır."
+  },
+  "map": {
+    "title": "Kampüs Nabzı",
+    "west": "Batı Yerleşkesi",
+    "east": "Doğu Yerleşkesi",
+    "districts": "İlçe Birimleri",
+    "registered": "{n} kayıtlı",
+    "active_7d": "Son 7 günde {n} kişi",
+    "no_activity": "Henüz katılım yok",
+    "note": "Harita, katılımı ve alanlara göre farkındalığı gösterir. Birimler puanla sıralanmaz.",
+    "no_unit_scores": "Birimler kampüs ortalamasına göre üç grupta gösterilir. Sayısal puan ve sıralama yayımlanmaz."
+  },
+  "common": {
+    "loading": "Yükleniyor",
+    "retry": "Tekrar dene",
+    "error": "Bir sorun çıktı. Biraz sonra tekrar dene.",
+    "offline": "Bağlantı yok. Cevabın bağlantı gelince gönderilecek.",
+    "language": "Dil",
+    "privacy": "Gizlilik",
+    "delete_account": "Hesabımı ve verilerimi sil"
+  }
+}

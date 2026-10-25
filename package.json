@@ -1,0 +1,18 @@
+{
+  "name": "yazem-okuryazarlik",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "SDÜ Yapay Zekâ Okuryazarlığı Platformu — arayüz derlemesi",
+  "scripts": {
+    "build": "node build.mjs",
+    "diagram": "node tools/render_diagram.mjs"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12"
+  }
+}

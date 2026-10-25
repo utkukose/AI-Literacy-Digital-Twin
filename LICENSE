@@ -1,0 +1,153 @@
+AI Literacy Digital Twin
+Source-Available License (View Only), Version 1.0
+
+Copyright (c) 2026 Utku Köse and Enes Şenol. All rights reserved.
+
+The Turkish text of this license follows the English text.
+
+
+ENGLISH
+
+1. The Software
+
+"The Software" means everything published in this repository: the source
+code, the interface texts, the documentation and the images. The Software is
+the AI literacy and digital twin platform that Utku Köse and Enes Şenol (the
+"Copyright Holders") developed for use at the Artificial Intelligence
+Application and Research Center (YAZEM) of Süleyman Demirel University,
+Isparta, Türkiye.
+
+The case bank, the database schema, the deployment configuration and the other
+components needed to operate the platform are not part of this repository and
+are not licensed by this document.
+
+2. What is permitted
+
+Anyone may view and read the Software on GitHub in order to study it, to review
+it for academic purposes and to understand how the platform works. Anyone may
+cite the Software and link to this repository, and may quote brief excerpts of
+it in scholarly or educational works, provided that the Copyright Holders and
+this repository are named as the source.
+
+3. What requires written permission
+
+Unless the Copyright Holders have given prior written permission, no one may:
+
+  a) install, build, run, deploy, host or operate the Software or any part of
+     it, for any purpose and in any setting, commercial or not;
+  b) offer the Software, or anything based on it, as a service to others;
+  c) copy, reproduce, modify, translate or adapt the Software, or create
+     derivative works from it;
+  d) distribute, publish, sublicense, sell, rent or otherwise make the Software
+     or any part of it available to others;
+  e) use the texts, images, designs or other content of the Software in other
+     works, products or services;
+  f) use the Software, in whole or in part, to train, fine-tune or evaluate
+     machine learning or artificial intelligence models;
+  g) use the names, logos or marks of Süleyman Demirel University, YAZEM or the
+     Copyright Holders, or suggest that they endorse anything.
+
+Forking this repository within GitHub, as GitHub's Terms of Service allow for
+public repositories, grants none of the rights listed in this section.
+
+4. Requests
+
+Requests for permission are addressed to Prof. Dr. Utku Köse
+(utkukose@sdu.edu.tr). A permission is valid only in writing and only within
+the scope it states.
+
+5. End of permission
+
+Any use of the Software beyond what this license permits ends, automatically
+and at once, the permissions this license grants to that user.
+
+6. No warranty and no liability
+
+The Software is provided "as is", without warranty of any kind, express or
+implied, including but not limited to the warranties of merchantability,
+fitness for a particular purpose and non-infringement. In no event shall the
+Copyright Holders be liable for any claim, damages or other liability arising
+from, out of or in connection with the Software or its use.
+
+7. Governing law
+
+This license is governed by the laws of the Republic of Türkiye. The courts
+and enforcement offices of Isparta have jurisdiction over any dispute arising
+from it. If the English and Turkish texts differ, the Turkish text prevails.
+
+
+TÜRKÇE
+
+AI Literacy Digital Twin
+Kaynağı Görülebilir Lisans (Yalnızca İnceleme), Sürüm 1.0
+
+Telif Hakkı (c) 2026 Utku Köse ve Enes Şenol. Tüm hakları saklıdır.
+
+1. Yazılım
+
+"Yazılım", bu depoda yayımlanan her şeyi ifade eder: Kaynak kod, arayüz
+metinleri, belgeler ve görseller. Yazılım, Utku Köse ve Enes Şenol'un ("Hak
+Sahipleri") Süleyman Demirel Üniversitesi Yapay Zekâ Uygulama ve Araştırma
+Merkezi'nde (YAZEM) kullanılmak üzere geliştirdiği yapay zekâ okuryazarlığı ve
+dijital ikiz platformudur.
+
+Vaka bankası, veritabanı şeması, kurulum yapılandırması ve platformu
+işletmek için gereken diğer bileşenler bu depoda yer almaz ve bu lisansın
+kapsamında değildir.
+
+2. Serbest olan kullanımlar
+
+Herkes Yazılım'ı incelemek, akademik amaçla değerlendirmek ve platformun nasıl
+çalıştığını anlamak için GitHub üzerinde görüntüleyebilir ve okuyabilir.
+Herkes Yazılım'a atıf yapabilir, bu depoya bağlantı verebilir ve Hak Sahipleri
+ile bu depoyu kaynak olarak belirtmek koşuluyla bilimsel ya da eğitsel
+çalışmalarda Yazılım'dan kısa alıntılar yapabilir.
+
+3. Yazılı izne bağlı olan kullanımlar
+
+Hak Sahipleri önceden yazılı izin vermedikçe hiç kimse:
+
+  a) Yazılım'ı ya da herhangi bir parçasını, ticari olsun ya da olmasın hiçbir
+     amaçla ve ortamda kuramaz, derleyemez, çalıştıramaz, yayına alamaz,
+     barındıramaz ve işletemez;
+  b) Yazılım'ı ya da ona dayanan herhangi bir şeyi başkalarına hizmet olarak
+     sunamaz;
+  c) Yazılım'ı kopyalayamaz, çoğaltamaz, değiştiremez, çeviremez, uyarlayamaz
+     ve ondan türev çalışma üretemez;
+  d) Yazılım'ı ya da herhangi bir parçasını dağıtamaz, yayımlayamaz, alt
+     lisanslayamaz, satamaz, kiralayamaz ve başka bir yolla başkalarının
+     kullanımına sunamaz;
+  e) Yazılım'ın metinlerini, görsellerini, tasarımlarını ve diğer içeriğini
+     başka çalışmalarda, ürünlerde ya da hizmetlerde kullanamaz;
+  f) Yazılım'ı ya da herhangi bir parçasını makine öğrenmesi veya yapay zekâ
+     modellerini eğitmek, ince ayarlamak ya da değerlendirmek için kullanamaz;
+  g) Süleyman Demirel Üniversitesi'nin, YAZEM'in ya da Hak Sahipleri'nin
+     adlarını, logolarını ya da işaretlerini kullanamaz ve onların herhangi
+     bir şeyi desteklediği izlenimini veremez.
+
+Bu deponun, GitHub Kullanım Koşulları'nın herkese açık depolar için izin
+verdiği biçimde GitHub içinde çatallanması (fork), bu bölümde sayılan
+haklardan hiçbirini vermez.
+
+4. İzin talepleri
+
+İzin talepleri Prof. Dr. Utku Köse'ye (utkukose@sdu.edu.tr) iletilir. Bir izin
+yalnızca yazılı olduğunda ve yalnızca belirttiği kapsamda geçerlidir.
+
+5. İznin sona ermesi
+
+Yazılım'ın bu lisansın izin verdiğinin dışında kullanılması, bu lisansın o
+kullanıcıya tanıdığı izinleri kendiliğinden ve derhâl sona erdirir.
+
+6. Garanti ve sorumluluk reddi
+
+Yazılım "olduğu gibi" sunulur. Ticarete elverişlilik, belirli bir amaca
+uygunluk ve hak ihlali bulunmaması dâhil, açık ya da örtülü hiçbir garanti
+verilmez. Hak Sahipleri, Yazılım'dan ya da kullanımından doğan ya da onunla
+bağlantılı hiçbir talep, zarar ya da yükümlülükten sorumlu tutulamaz.
+
+7. Uygulanacak hukuk
+
+Bu lisansa Türkiye Cumhuriyeti hukuku uygulanır. Lisanstan doğan
+uyuşmazlıklarda Isparta mahkemeleri ve icra daireleri yetkilidir. İngilizce
+ve Türkçe metinler arasında farklılık olması hâlinde Türkçe metin esas alınır.

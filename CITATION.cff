@@ -1,0 +1,38 @@
+cff-version: 1.2.0
+message: "If you refer to this platform, please cite it as below."
+title: "AI Literacy Digital Twin: A Case-Based AI Literacy Platform with Personal and Campus Digital Twins"
+abstract: >-
+  A web platform that measures and develops the AI literacy of a university
+  campus through realistic cases in seven areas. Every user has a digital twin
+  that estimates competence in each area with a Rasch model updated by the Elo
+  rule, seals its prediction before each step with SHA-256, scores answers with
+  a proper scoring rule that rewards calibrated confidence, and chooses the next
+  case by spaced review. The users' twins form a campus twin shown on a live
+  campus map under k-anonymity. Developed for the AI Application and Research
+  Center (YAZEM) of Süleyman Demirel University, Isparta, Türkiye.
+type: software
+authors:
+  - family-names: "Köse"
+    given-names: "Utku"
+    orcid: "https://orcid.org/0000-0002-9652-6415"
+    affiliation: "Süleyman Demirel University, Isparta, Türkiye"
+  - family-names: "Şenol"
+    given-names: "Enes"
+    affiliation: "Süleyman Demirel University, Isparta, Türkiye"
+version: "1.0.0"
+date-released: "2026-10-25"
+license-url: "https://github.com/utkukose/AI-Literacy-Digital-Twin/blob/main/LICENSE"
+url: "https://github.com/utkukose/AI-Literacy-Digital-Twin"
+repository-code: "https://github.com/utkukose/AI-Literacy-Digital-Twin"
+keywords:
+  - AI literacy
+  - digital twin
+  - campus digital twin
+  - item response theory
+  - Rasch model
+  - Elo rating
+  - calibration
+  - proper scoring rule
+  - spaced repetition
+  - k-anonymity
+  - higher education

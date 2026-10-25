@@ -1,0 +1,110 @@
+{
+  "locale": "en",
+  "locale_name": "English",
+  "app": {
+    "name": "SDU AI Literacy",
+    "short_name": "AI Literacy",
+    "by": "YAZEM — Artificial Intelligence Application and Research Center"
+  },
+  "auth": {
+    "email_label": "Your university e-mail address",
+    "email_hint": "@sdu.edu.tr or @stud.sdu.edu.tr",
+    "send_code": "Send code",
+    "code_label": "The 6-digit code sent to your inbox",
+    "verify": "Verify and enter",
+    "code_sent": "Code sent. If it does not arrive within a few minutes, check your spam folder.",
+    "code_invalid": "That code is wrong or has expired.",
+    "domain_rejected": "Only institutional email addresses are accepted.",
+    "rate_limited": "Too many attempts. Please wait a moment.",
+    "sign_out": "Sign out"
+  },
+  "role": {
+    "student": "Student",
+    "academic": "Academic staff",
+    "admin_staff": "Administrative staff",
+    "declare_prompt": "What is your role?"
+  },
+  "unit": {
+    "label": "Your unit",
+    "search_placeholder": "Type a faculty, department or directorate",
+    "change": "Change unit",
+    "change_limited": "Your unit can be changed once per term.",
+    "not_set": "No unit selected"
+  },
+  "dimension": {
+    "prompt_design": "Task and Prompt Design",
+    "verification": "Verification and Hallucination Detection",
+    "integrity": "Citation and Academic Integrity",
+    "privacy": "Data Privacy",
+    "manipulation": "Manipulation Resistance",
+    "op_security": "Institutional Information Security",
+    "boundaries": "Limits and Bias Awareness"
+  },
+  "twin": {
+    "title": "Your Digital Twin",
+    "subtitle": "Every case you finish makes your twin a little more accurate.",
+    "no_data": "No data yet",
+    "attempts": "{n} cases",
+    "calibration": "Calibration",
+    "calibration_help": "Measures how well you judge what you know, not how much you know.",
+    "points": "Points",
+    "strongest": "Your strongest area",
+    "focus": "Focus this week"
+  },
+  "case": {
+    "weekly": "Case of the Week",
+    "core": "Core Case",
+    "start": "Start",
+    "continue": "Continue",
+    "closes_in": "Closes in {n} days",
+    "archived": "Archived — reduced point value",
+    "none_available": "No case is open right now. New cases appear here as they are published.",
+    "estimated": "about {n} minutes"
+  },
+  "step": {
+    "next": "Next",
+    "submit": "Submit",
+    "of": "{i} of {n}",
+    "confidence_label": "How confident are you?",
+    "confidence_help": "Being wrong when you were sure costs more than saying you don't know.",
+    "span_select": "Mark the relevant parts of the text",
+    "source_verify": "Judge each reference",
+    "source_real": "Real",
+    "source_fake": "Fabricated",
+    "pattern_check": "Rewrite the text",
+    "chars_left": "{n} characters left",
+    "reasoned_choice": "State your choice and your reason",
+    "reason_label": "Why?",
+    "branching": "Make your decision"
+  },
+  "feedback": {
+    "correct": "Correct",
+    "partial": "Partly correct",
+    "incorrect": "Incorrect",
+    "points_gained": "+{n} points",
+    "points_lost": "{n} points",
+    "twin_moved": "Your twin has been updated",
+    "debrief": "Solution note",
+    "debrief_locked": "The solution note is published when the case closes."
+  },
+  "map": {
+    "title": "Campus Status",
+    "west": "West Campus",
+    "east": "East Campus",
+    "districts": "District Units",
+    "registered": "{n} registered",
+    "active_7d": "{n} people in the last 7 days",
+    "no_activity": "No activity yet",
+    "note": "The map shows participation and awareness by area; units are not ranked by score.",
+    "no_unit_scores": "Units are shown in three groups against the campus average; no numeric score and no ranking is published."
+  },
+  "common": {
+    "loading": "Loading",
+    "retry": "Retry",
+    "error": "Something went wrong.",
+    "offline": "No connection. Your answer will be sent when you are back online.",
+    "language": "Language",
+    "privacy": "Privacy",
+    "delete_account": "Delete my account and data"
+  }
+}
