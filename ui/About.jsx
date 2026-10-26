@@ -252,17 +252,17 @@ const T = {
         "İkiz kullanıcıyı henüz az tanırken hızlı, tanıdıkça daha temkinli öğrenir. Böylece tek bir kötü gün, ikizin o ana kadar öğrendiklerini bir anda değiştiremez.",
       ],
       [
-        "K_b = 0,05 · 30 / (30 + n)",
-        "n, adımın kaç kez cevaplandığını gösterir. Adım ne kadar çok cevaplanırsa zorluğu o kadar yavaş değişir. Zorluk vakanın her çeşidi için ayrı tutulmaktadır.",
+        "K_b = 0,30 · 20 / (20 + n)",
+        "n, adımın kaç kez cevaplandığını gösterir. Henüz cevaplanmamış bir adımın zorluğu hızlı öğrenilir. Adım cevaplandıkça zorluğu daha yavaş değişir ve yirmi cevaptan sonra adım büyüklüğü yarıya iner. Zorluk vakanın her çeşidi için ayrı tutulmaktadır.",
       ],
       [
-        "SH = 1 / √(1 + Σ p(1 − p))",
-        "Hâle, Rasch modelinin standart hatasına (SH) göre çizilir. Gösterilen aralık θ ± 1,28 SH'dir ve gerçek yetkinliği beş durumdan dördünde kapsar.",
+        "V ← (1 − K w)² V + K² w + 0,008,   w = P(1 − P)",
+        "Hâle, ikizin yetkinlik tahminindeki hatanın varyansına (V) göre çizilir. V başlangıçta 1'dir. Her cevap önceki hatayı bir miktar küçültür (ilk terim) ve kendi rastlantısallığını ekler (ikinci terim). Son terim, kullanıcı pratik yaptıkça yetkinliğinin de değişmesine pay bırakır. Gösterilen aralık θ ± 1,28 √V'dir ve kullanıcının yetkinliğini beş durumdan dördünde kapsaması amaçlanır.",
       ],
     ],
     modelNote: "Kullanılan lojistik model, her sonucun nasıl hesaplandığını adım adım gösterebilmektedir. Bu özellik KVKK açısından da önemlidir: KVKK'nin 11. maddesi kişiye, işlenen verilerinin yalnızca otomatik sistemlerle analiz edilmesi sonucunda aleyhine bir sonuç ortaya çıkmasına itiraz etme hakkı tanır. Böyle bir itiraz ancak sonucun gerekçesi açıklanabiliyorsa cevaplanabilir.",
     confHead: "Güven ve kalibrasyon",
-    conf1: "Birbirini izleyen kararlardan oluşan adımlar dışındaki her adımda, cevabın yanında kullanıcının bu cevaptan ne kadar emin olduğu da sorulur. Güven düzeyi %50, %60, %70, %80 ya da %90 olarak seçilir. Ölçeğin %90'da bitmesi bilinçli bir tercihtir: Burada ölçülmek istenen, kullanıcının kendi bilgisini ne kadar doğru tarttığıdır.",
+    conf1: "Birbirini izleyen kararlardan oluşan adımlar dışındaki her adımda, cevabın yanında kullanıcının bu cevaptan ne kadar emin olduğu da sorulur. Güven düzeyi %50, %60, %70, %80 ya da %90 olarak seçilir. Ölçeğin %90'da bitmesi bilinçli bir tercihtir: Burada ölçülmek istenen, kullanıcının kendi bilgisini ne kadar doğru tarttığıdır. %50 seçilebilecek en düşük güvendir ve “bilmiyorum” anlamına gelir. Bu yüzden ayna grafiğinde ve uyarılarda, kullanıcının bildiğinden fazla emin olup olmadığına %50'nin üzerindeki güven bildirimlerinden bakılır.",
     conf2: "Puan bu güven düzeyine göre hesaplanır ve kullanılan kural dürüstlüğü ödüllendirir. Tahminlerin değerlendirilmesinde uygun puanlama kuralı adıyla bilinen bu yaklaşımda beklenen puan, yani çok sayıda cevapta ortalama olarak kazanılacak puan, kullanıcı gerçekte duyduğu güveni belirttiğinde en yüksek olur [4, 6]. %50 güvenle verilen bir cevap ne puan kazandırır ne de kaybettirir. Buna karşılık çok emin olup yanılmak, adımın değerinden daha fazla puan kaybettirir. Cevabı kendisi bulmayan kişi o cevaba ne kadar güvenmesi gerektiğini bilemeyeceği için başkasından alınmış bir cevabı tekrarlamak kazançlı değildir.",
     beliefLabel: "Kullanıcının gerçekte duyduğu güven:",
     expectedHead: "Belirtilen güvene göre on puanlık bir adımdan beklenen puan",
@@ -283,6 +283,10 @@ const T = {
       [
         "Brier = güvenilirlik − çözünürlük + belirsizlik",
         "“Seni kim daha iyi tanıyor?” kartı kullanıcının Brier puanını ikizinkiyle yan yana koyar ve Murphy ayrıştırmasıyla üç bileşene böler [5]: Güven ile isabet arasındaki fark (kartta “Kalibrasyon”), bilinen ve bilinmeyen adımlara verilen güvenin ne ölçüde farklılaştığı (“Ayırt edicilik”) ve adımların kullanıcı açısından zorluğu (“Belirsizlik”).",
+      ],
+      [
+        "q = (k + 20 · P) / (n + 20)",
+        "İkizin mühürlü tahmini (P), kısmi puanı da içeren beklenen sonuçtur. “Seni kim daha iyi tanıyor?” kartında bu tahmin, tam doğru cevap olasılığına (q) çevrilir. n, kampüste aynı türden olup tahmini aynı onluk dilime düşen adımların sayısı, k de bunlardan tam doğru cevaplananların sayısıdır. Karşılaştırmada q, kullanıcının seçebildiği %50–%90 aralığına çekilir.",
       ],
       [
         "AUROC",
@@ -306,12 +310,12 @@ const T = {
       ],
     ],
     nextHead: "Sıradaki vaka nasıl seçilir?",
-    next1: "İkiz önce tekrar zamanı gelmiş bir alan olup olmadığına bakar. Bir alanda yanlış cevap verildiğinde o alan ertesi gün kullanıcının karşısına yeniden çıkar. Alanda doğru cevap verildikçe tekrar aralığı üç, yedi ve yirmi bir güne uzar. Aralıklı tekrarın öğrenilenleri kalıcı hâle getirdiği, öğrenme araştırmalarının en sağlam bulgularından biridir [8]. Tekrar zamanı gelmiş bir alan yoksa yönetimin öne çıkardığı alan, o da yoksa ikizin kullanıcıyı en az tanıdığı alan seçilir.",
+    next1: "İkiz önce tekrar zamanı gelmiş bir alan olup olmadığına bakar. Bir alanda yanlış cevap verildiğinde o alan ertesi gün kullanıcının karşısına yeniden çıkar. Alanda doğru cevap verildikçe tekrar aralığı üç, yedi ve yirmi bir güne uzar. Aralıklı tekrarın öğrenilenleri kalıcı hâle getirdiği, öğrenme araştırmalarının en sağlam bulgularından biridir [8]. Tekrar, vakaların en fazla yarısında öne geçer ve böylece ikizin kullanıcıyı az tanıdığı alanlar da sıra bulur. Tekrar sırası değilse ya da tekrar zamanı gelmiş bir alan yoksa yönetimin öne çıkardığı alan, o da yoksa ikizin kullanıcıyı en az tanıdığı alan seçilir.",
     next2: "Seçilen alanın vakaları arasından, kullanıcının başarı olasılığı %65'e en yakın olan vaka önerilir. Bu düzeydeki bir vaka, bir şey öğretecek kadar zor, sonuna kadar götürülebilecek kadar da kolaydır. Vaka kartında vakanın neden seçildiği de yazar.",
     nextD: [
       [
         "Tekrar aralığı: 1 → 3 → 7 → 21 gün",
-        "Başarı eşiğinin (0,8) altında kalan bir sonuç, alanı ertesi gün için tekrar listesine alır. Tekrar zamanı gelmiş bir alanda başarılı olunduğunda aralık bir sonraki değere uzar, 21 günlük aralıktan sonra da alan listeden çıkar.",
+        "Başarı eşiğinin (0,8) altında kalan bir sonuç, alanı ertesi gün için tekrar listesine alır. Tekrar zamanı gelmiş bir alanda başarılı olunduğunda aralık bir sonraki değere uzar, 21 günlük aralıktan sonra da alan listeden çıkar. Tekrar zamanı gelmiş alan, kullanıcının o ana kadar başladığı vaka sayısı çift olduğunda öne alınır. Vakalar %65 başarı olasılığına göre seçildiğinden çoğu vakada en az bir adım eşiğin altında kalır ve bu sınır olmasaydı tekrar listesi neredeyse her vakayı kendisi seçerdi.",
       ],
       [
         "Uygunluk = |P(doğru) − 0,65|",
@@ -319,21 +323,21 @@ const T = {
       ],
     ],
     hintHead: "İpucu ve deney",
-    hint1: "Mühürlü tahmin %45'in altında kaldığında, adımdan önce adımın türüne uygun bir strateji ipucu gösterilir. İpucu cevabı vermez, yalnızca adıma nasıl yaklaşılabileceğini hatırlatır. İpuçlarının gerçekten işe yarayıp yaramadığı bir deneyle sınanmaktadır. Deney sürdüğü sürece kullanıcılar seçkisiz olarak iki gruba ayrılır. Gruplardan biri ipuçlarını görür, diğeri görmez ve iki grubun sonuçları yönetim panelinde karşılaştırılır. Kullanıcının grubu takma kimliğinden türetilen bir sayıyla belirlendiği için her kullanıcı deney boyunca aynı grupta kalır.",
+    hint1: "Mühürlü tahmin %45'in altında kaldığında, adımdan önce adımın türüne uygun bir strateji ipucu gösterilir. İpucu cevabı vermez, yalnızca adıma nasıl yaklaşılabileceğini hatırlatır. İpuçlarının gerçekten işe yarayıp yaramadığı bir deneyle sınanmaktadır. Deney sürdüğü sürece ipucu gösterilebilecek her adımda, ipucunun gösterilip gösterilmeyeceği yazı tura atar gibi seçkisiz olarak belirlenir ve bu karar kaydedilir. Böylece aynı kullanıcı bazı adımlarda ipucu görür, bazılarında görmez. İpucunun etkisi her kullanıcının kendi adımları arasında karşılaştırılır ve sonuç yönetim panelinde raporlanır.",
     hint2: "Bir alandaki son cevaplarında bildiğinden belirgin biçimde fazla emin davranan kullanıcı, yüksek bir güven düzeyi seçtiğinde kısa bir uyarı görür.",
     hintD: [
       ["İpucu eşiği: P < 0,45", "Eşik, yönetim panelinden değiştirilebilen bir ayardır."],
       [
-        "r = ort(x − P)",
-        "Her kullanıcı için, ipucu gösterilebilecek adımlarda sonucun (x) mühürlü tahminden (P) ne kadar saptığının ortalaması alınır. Seçkisiz atama adım düzeyinde değil kullanıcı düzeyinde yapıldığından gruplar da kişi başına hesaplanan bu ortalamalarla karşılaştırılır.",
+        "d = ort(x − P, ipucu gösterilen adımlar) − ort(x − P, gösterilmeyen adımlar)",
+        "Her kullanıcı için, ipucu gösterilebilecek adımlarda sonucun (x) mühürlü tahminden (P) ne kadar saptığına bakılır. İpucu gösterilen ve gösterilmeyen adımlardaki sapmaların ortalamaları arasındaki fark, o kullanıcıdaki farktır (d). Her iki türden adımı olan kullanıcılar hesaba girer.",
       ],
       [
-        "Δ = ort(r, ipucu grubu) − ort(r, karşılaştırma grubu)",
-        "İpucunun etkisi, iki grubun ortalamaları arasındaki farktır.",
+        "Δ = ort(d)",
+        "İpucunun etkisi, bu farkların kullanıcılar üzerinden ortalamasıdır. Her kullanıcı kendi karşılaştırmasını taşıdığı için kişiler arasındaki farklar etkiyi gölgelemez.",
       ],
       [
-        "%95 güven aralığı = Δ ± 1,96 · SH",
-        "SH, iki grubun varyanslarından hesaplanan standart hatadır. Fark ve güven aralığı, her grupta en az 20 kullanıcı olduğunda raporlanır.",
+        "%95 güven aralığı = Δ ± 1,96 · s / √m",
+        "s, kullanıcı başına farkların standart sapması, m de bu kullanıcıların sayısıdır. Fark ve güven aralığı, her iki türden adımı olan en az 20 kullanıcı olduğunda raporlanır.",
       ],
     ],
     campusHead: "Kampüs ikizi ve mahremiyet",
@@ -348,12 +352,16 @@ const T = {
         "Birime, alana ya da güne göre ayrılmış bir veri ancak en az on kişiye dayandığında gösterilir [10].",
       ],
       [
-        "Δθ = θ(birim) − θ(kampüs)",
-        "θ(birim), birimdeki kullanıcıların o alandaki yetkinliklerinin ortalamasıdır. Δθ 0,35'i aşarsa birim kampüsün üstünde, −0,35'in altına inerse kampüsün altında, aradaki durumlarda kampüsle aynı düzeyde gösterilir. Bu aralık, olağan dalgalanmalar yüzünden bir birim gruplar arasında gidip gelmesin diye geniş tutulmuştur.",
+        "Σ [x − σ(θ_B − b)] = θ_B − θ_K",
+        "Bir birimin bir alandaki düzeyi (θ_B), kişisel ikizlerin ortalamasından değil, birimdeki kullanıcıların o alandaki bütün cevaplarından birlikte kestirilir. x cevabın sonucu, b ise adımın, tahmin mühürlenirken sahip olduğu zorluktur. Eşitliğin sağ tarafı, az cevabı olan bir birimi kampüs düzeyine (θ_K) yakın tutar ve yaklaşık dört cevaplık bir ağırlık taşır. Kampüs düzeyi de aynı yolla, bütün cevaplardan bulunur. Kişisel ikizler az sayıda cevapla kişinin düzeyine ancak kısmen yaklaştığından, ikizlerin ortalaması birimler arasındaki farkları olduğundan küçük gösterir. Bu yüzden birimler doğrudan cevaplar üzerinden karşılaştırılır.",
+      ],
+      [
+        "Δθ = θ_B − θ_K,   Δθ ± 1,96 · SH",
+        "Birim, Δθ 0,1'i aştığında ve %95 güven aralığı bütünüyle sıfırın üstünde kaldığında kampüsün üstünde gösterilir. Kampüsün altı için aynı kural tersinden uygulanır, diğer durumlarda birim kampüsle aynı düzeyde gösterilir. SH hesaplanırken aynı kişinin cevaplarının birbirinden bağımsız olmadığı hesaba katılır. Böylece bir birim, ancak kendi verisi yeterince açık bir fark gösterdiğinde kampüsten ayrı bir grupta yer alır.",
       ],
       [
         "Fark = ort(c) − isabet oranı",
-        "Güven ve isabet kartında farkı 0,08'i aşan alan fazla emin, −0,08'in altında kalan alan az emin, aradakiler ise dengeli sayılır.",
+        "Güven ve isabet kartında farkı 0,08'i aşan alan fazla emin, −0,08'in altında kalan alan az emin, aradakiler ise dengeli sayılır. Fazla emin olup olmadığına %50'nin üzerindeki güven bildirimlerinden, az emin olup olmadığına ise bütün bildirimlerden bakılır.",
       ],
     ],
     forecastHead: "Kampüs ikizinin günlük tahmini",
@@ -534,17 +542,17 @@ const T = {
         "The twin learns fast while it knows the user little, and more carefully as it learns more. A single bad day therefore cannot overturn what the twin has learned so far.",
       ],
       [
-        "K_b = 0.05 · 30 / (30 + n)",
-        "As a step is answered n times, its difficulty changes more slowly. Difficulty is kept separately for each variant.",
+        "K_b = 0.30 · 20 / (20 + n)",
+        "n is the number of times the step has been answered. The difficulty of a step nobody has answered is learned fast, and it changes more slowly as answers come in, with the step size halved after twenty answers. Difficulty is kept separately for each variant.",
       ],
       [
-        "SE = 1 / √(1 + Σ p(1 − p))",
-        "The uncertainty shown by the halo is the standard error of the Rasch model. The range shown is θ ± 1.28 SE, which contains the true competence four times out of five.",
+        "V ← (1 − K w)² V + K² w + 0.008,   w = P(1 − P)",
+        "The halo is drawn from the variance (V) of the error in the twin's estimate of competence, which starts at 1. Each answer shrinks the earlier error a little (the first term) and adds its own chance variation (the second). The last term leaves room for competence to change as the user practises. The range shown is θ ± 1.28 √V, meant to contain the user's competence four times out of five.",
       ],
     ],
     modelNote: "The logistic model used here can show step by step how each result was calculated. This matters for KVKK as well: Article 11 of Türkiye's personal data protection law gives a person the right to object to a result against them that arises solely from automated analysis of their data. Such an objection can only be answered if the grounds of the result can be explained.",
     confHead: "Confidence and calibration",
-    conf1: "In every step except branching decision steps, the user is also asked how sure they are of their answer. The confidence level is chosen from 50%, 60%, 70%, 80% and 90%. The scale deliberately stops short of 100%, because what is measured is not certainty but how accurately users weigh their own knowledge.",
+    conf1: "In every step except branching decision steps, the user is also asked how sure they are of their answer. The confidence level is chosen from 50%, 60%, 70%, 80% and 90%. The scale deliberately stops short of 100%, because what is measured is not certainty but how accurately users weigh their own knowledge. 50% is the lowest level on offer and means “I don't know”, so the mirror chart and the warnings judge whether a user is more confident than they are right from the confidence stated above 50%.",
     conf2: "Points are worked out from this confidence level, and the rule used rewards honesty. Under this rule, known in forecast evaluation as a proper scoring rule, the choice that gives the highest expected points is the confidence the user truly holds [4, 6]. An answer given with 50% confidence neither earns nor loses points. Being very sure and wrong, on the other hand, costs more than the step is worth. Repeating someone else's answer therefore does not pay, because a person who did not find the answer cannot tell how far to trust it.",
     beliefLabel: "Confidence actually held:",
     expectedHead: "Expected points from a ten-point step, by the confidence stated",
@@ -565,6 +573,10 @@ const T = {
       [
         "Brier = reliability − resolution + uncertainty",
         "The “Who knows you better?” card sets the user's Brier score beside the twin's and splits it into three components with Murphy's decomposition [5]: the gap between confidence and accuracy, how far the confidence given to known and unknown steps differs, and how hard the steps were for the user.",
+      ],
+      [
+        "q = (k + 20 · P) / (n + 20)",
+        "The twin's sealed prediction (P) is the expected outcome, partial credit included. On the “Who knows you better?” card it is turned into a chance of being fully right (q): n is the number of steps of the same kind on campus whose prediction fell in the same tenth, and k is how many of them were fully right. In the comparison, q is held to the 50–90% range a user can choose from.",
       ],
       [
         "AUROC",
@@ -588,12 +600,12 @@ const T = {
       ],
     ],
     nextHead: "How the next case is chosen",
-    next1: "The twin first checks whether any area is due for review. An area answered wrongly comes back to the user the next day, and as it is answered rightly, the review interval grows to three, seven and twenty-one days. That spaced repetition makes learning last is one of the most robust findings of learning research [8]. When no area is due, the area put forward by the administration is chosen, and failing that, the area the twin knows least about.",
+    next1: "The twin first checks whether any area is due for review. An area answered wrongly comes back to the user the next day, and as it is answered rightly, the review interval grows to three, seven and twenty-one days. That spaced repetition makes learning last is one of the most robust findings of learning research [8]. Review leads at most every other case, so the areas the twin knows little about also get their turn. When it is not review's turn or no area is due, the area put forward by the administration is chosen, and failing that, the area the twin knows least about.",
     next2: "Among the cases of the chosen area, the one where the user's chance of success is closest to 65% is suggested. At this level a case is hard enough to teach something and easy enough to be carried through. The case card also says why the case was chosen.",
     nextD: [
       [
         "Review interval: 1 → 3 → 7 → 21 days",
-        "An outcome below the success threshold (0.8) puts the area on the review list for the next day. A success in an area that is due moves its interval to the next value, and after the 21-day interval the area leaves the list.",
+        "An outcome below the success threshold (0.8) puts the area on the review list for the next day. A success in an area that is due moves its interval to the next value, and after the 21-day interval the area leaves the list. An area that is due is brought forward when the number of cases the user has begun so far is even. Cases are chosen at a 65% chance of success, so most cases have at least one step below the threshold, and without this limit the review list would choose almost every case itself.",
       ],
       [
         "Fit = |P(right) − 0.65|",
@@ -601,21 +613,21 @@ const T = {
       ],
     ],
     hintHead: "Hints and the experiment",
-    hint1: "When the sealed prediction is below 45%, a strategy hint suited to the kind of step is shown before it. The hint does not give the answer. It only reminds the user how to approach the step. Whether hints really help is tested in an experiment. While it runs, users are randomly assigned to two groups: one group sees hints and the other does not, and the results of the two groups are compared in the administration panel. Since a user's group is set by a number derived from their pseudonym, every user stays in the same group throughout the experiment.",
+    hint1: "When the sealed prediction is below 45%, a strategy hint suited to the kind of step is shown before it. The hint does not give the answer. It only reminds the user how to approach the step. Whether hints really help is tested in an experiment. While it runs, every step where a hint could be shown gets a random draw, like a coin toss, that decides whether the hint is shown, and the draw is recorded. The same user therefore sees hints on some steps and not on others. The effect of the hint is compared within each user's own steps and reported in the administration panel.",
     hint2: "When a user's confidence in an area has stayed clearly above their accuracy in recent answers, a short warning appears when they choose a high confidence.",
     hintD: [
       ["Hint threshold: P < 0.45", "The threshold is a setting the administration can change."],
       [
-        "r = mean(x − P)",
-        "For each user, the gap between the outcome (x) and the sealed prediction (P) is averaged over the steps where a hint could be shown. Since users, not steps, are randomly assigned, the groups are compared on these per-user means.",
+        "d = mean(x − P, steps with a hint) − mean(x − P, steps without)",
+        "For each user, the gap between the outcome (x) and the sealed prediction (P) is taken on the steps where a hint could be shown. The difference between the mean gaps on steps with and without a hint is that user's difference (d). Users with steps of both kinds are counted.",
       ],
       [
-        "Δ = mean(r, hint group) − mean(r, comparison group)",
-        "The effect of the hint is the difference between the means of the two groups.",
+        "Δ = mean(d)",
+        "The effect of the hint is the mean of these differences over users. Since every user carries their own comparison, differences between people do not blur the effect.",
       ],
       [
-        "95% confidence interval = Δ ± 1.96 · SE",
-        "SE is the standard error computed from the variances of the two groups. The difference and its confidence interval are reported once each group has at least 20 users.",
+        "95% confidence interval = Δ ± 1.96 · s / √m",
+        "s is the standard deviation of the per-user differences and m the number of these users. The difference and its confidence interval are reported once at least 20 users have steps of both kinds.",
       ],
     ],
     campusHead: "The campus twin and privacy",
@@ -630,12 +642,16 @@ const T = {
         "A breakdown by unit, area or day is shown only when it rests on at least ten people [10].",
       ],
       [
-        "Δθ = θ(unit) − θ(campus)",
-        "θ(unit) is the mean competence of the unit's users in that area. Above 0.35 the unit is shown above the campus, below −0.35 below it, and level with the campus in between. The margin is kept wide so that ordinary variation does not move a unit between groups.",
+        "Σ [x − σ(θ_U − b)] = θ_U − θ_C",
+        "A unit's level in an area (θ_U) is estimated not from the mean of its users' twins but from all of their answers in that area together. x is an answer's outcome and b the difficulty the step had when its prediction was sealed. The right-hand side keeps a unit with few answers close to the campus level (θ_C), with a weight of about four answers. The campus level is found the same way from all answers. Since a personal twin comes only part of the way towards its user after a few answers, the mean of the twins makes the differences between units look smaller than they are, so units are compared on the answers directly.",
+      ],
+      [
+        "Δθ = θ_U − θ_C,   Δθ ± 1.96 · SE",
+        "A unit is shown above the campus when Δθ exceeds 0.1 and its 95% confidence interval lies wholly above zero. The same rule applies the other way for below the campus, and otherwise the unit is shown level with the campus. SE takes into account that the answers of one person are not independent of each other. A unit is therefore set apart from the campus only when its own data show a clear enough difference.",
       ],
       [
         "Gap = mean(c) − accuracy",
-        "On the confidence and accuracy card, an area whose gap is above 0.08 counts as overconfident, one below −0.08 as underconfident, and the areas in between as balanced.",
+        "On the confidence and accuracy card, an area whose gap is above 0.08 counts as overconfident, one below −0.08 as underconfident, and the areas in between as balanced. Overconfidence is read from the confidence stated above 50%, underconfidence from all of it.",
       ],
     ],
     forecastHead: "The campus twin's daily forecast",

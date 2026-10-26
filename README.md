@@ -95,7 +95,7 @@ When an answer arrives, the twin compares the outcome x, a value between 0 and 1
 
 $$\theta \leftarrow \theta + K\,(x - P), \qquad b \leftarrow b - K_b\,(x - P)$$
 
-The learning rate K is 0.40 for a user's first ten answers in an area and 0.15 afterwards, so the twin learns fast while it knows the user little and carefully once it knows more. The rate for difficulty, K_b = 0.05 · 30 / (30 + n), slows down as a step is answered n times, and difficulty is kept separately for each variant. The uncertainty of an estimate is the standard error of the Rasch model, SE = 1 / √(1 + Σ p(1 − p)). The rose chart shows θ ± 1.28 SE as a pale halo around each petal, a range that contains the true competence four times out of five.
+The learning rate K is 0.40 for a user's first ten answers in an area and 0.15 afterwards, so the twin learns fast while it knows the user little and carefully once it knows more. The rate for difficulty, K_b = 0.30 · 20 / (20 + n), starts at 0.30 for a new step and halves once the step has been answered 20 times, and difficulty is kept separately for each variant. The uncertainty of an estimate is the error variance V of the Elo estimate. It starts at 1 and is carried from answer to answer as V ← (1 − K w)² V + K² w + η, where w = P(1 − P), and the small term η = 0.008 leaves room for a competence that changes with practice, as in the Glicko system [14]. The rose chart shows θ ± 1.28 √V as a pale halo around each petal, a range meant to contain the true competence four times out of five.
 
 ## Confidence, scoring and calibration
 
@@ -105,7 +105,7 @@ $$\text{points} = v \cdot \left(1 - 4\,(c - s)^2\right)$$
 
 Here v is the value of the step, c is the stated confidence, and s is 1 when the outcome reaches the success threshold of 0.8 and 0 otherwise. An answer given with 50% confidence neither earns nor loses points, while being very sure and wrong costs more than the step is worth. Repeating someone else's answer therefore does not pay.
 
-Calibration is measured with the Brier score, (c − s)², averaged over the last 30 steps [4]. The twin screen sets the user's Brier score beside the twin's own and splits it with Murphy's decomposition into reliability, resolution and uncertainty [5]. The area under the ROC curve (AUROC) shows how well the stated confidence separates right answers from wrong ones, an established measure of metacognitive sensitivity [7]. Points are kept apart from the level and the badge, which depend only on the competence the twin measures.
+Calibration is measured with the Brier score, (c − s)², averaged over the last 30 steps [4]. The twin screen sets the user's Brier score beside the twin's own and splits it with Murphy's decomposition into reliability, resolution and uncertainty [5]. For this comparison, the twin's sealed prediction, which is the expected outcome with partial credit, is turned into a chance of full success, q = (k + 20 P) / (n + 20), where n counts the steps of the same kind whose sealed prediction fell into the same tenth on campus and k counts those among them that were fully right. Since 50% is the lowest confidence a user can state and means "I don't know", the mirror that compares confidence with accuracy reads overconfidence only from statements above 50%. The area under the ROC curve (AUROC) shows how well the stated confidence separates right answers from wrong ones, an established measure of metacognitive sensitivity [7]. Points are kept apart from the level and the badge, which depend only on the competence the twin measures.
 
 ## Sealed predictions
 
@@ -113,11 +113,11 @@ As each step appears, the twin computes the chance of a correct answer and seals
 
 ## Choosing the next case
 
-The twin first checks whether an area is due for review. An area answered below the success threshold returns the next day, and successful reviews stretch the interval to three, seven and twenty-one days, following one of the most robust findings of learning research [8]. When no area is due, the area set by the administration is chosen, and failing that, the area the twin knows least about. Within the chosen area, the case whose chance of success is closest to 65% is recommended, and the case card says why it was chosen.
+If the user has asked for an area, the case comes from that area. Otherwise the twin first checks whether an area is due for review. An area answered below the success threshold returns the next day, and successful reviews stretch the interval to three, seven and twenty-one days, following one of the most robust findings of learning research [8]. So that review does not take over every choice, a due area is brought forward only when the number of cases the user has started so far is even, which leaves review at most half of the choices. Otherwise the area set by the administration is chosen unless the user is already strong in it, and failing that, the area the twin knows least about. Within the chosen area, the case whose expected outcome P, computed from the mean difficulty of its steps in that area, is closest to 0.65 is recommended, and the case card says why it was chosen.
 
 ## Hints and the built-in experiment
 
-When the sealed prediction for a step is below 45%, a strategy hint suited to the kind of step is shown before it. The hint does not give the answer. Whether hints help is tested in a built-in randomised experiment: users are assigned to a hint group and a comparison group by their pseudonym, the mean of x − P is computed per user, and the difference between the groups is reported with a 95% confidence interval once each group has at least 20 users. A user whose confidence in an area has stayed clearly above their accuracy also sees a short warning when choosing a high confidence.
+When the sealed prediction for a step is below 45%, a strategy hint suited to the kind of step is shown before it. The hint does not give the answer. Whether hints help is tested in a built-in randomised experiment: for every eligible step a coin decides whether the hint is shown, and the decision is stored with the step. For each user, the difference between the mean of x − P on eligible steps with a hint and on those without is computed. The effect is the mean of these differences over users, reported with a 95% confidence interval once at least 20 users have steps of both kinds. Since every user experiences both conditions, the later influence of a hint on the twin falls equally on both. A user whose confidence in an area, in statements above 50%, has stayed clearly above their accuracy also sees a short warning when choosing a confidence of 80% or more.
 
 ## The badge
 
@@ -125,7 +125,7 @@ The badge shows a user's progress in four parts. The level (Newcomer, Practised,
 
 ## The campus twin and privacy
 
-The campus map shows participation on campus, the campus twin's standing in the seven areas and each unit's position against the campus average. A figure broken down by unit, area or day is published only when it rests on at least ten people, following the principle of k-anonymity [10]. Units never receive numeric scores or a ranking: a unit appears in only one of three bands, above, level with or below the campus, and the band changes only when the gap exceeds 0.35 on the competence scale. The time and the unit of a single answer appear on no screen.
+The campus map shows participation on campus, the campus twin's standing in the seven areas and each unit's position against the campus. A unit's level in an area is estimated from all the answers its members gave in that area with the same Rasch model, by solving Σ [x − σ(θ_unit − b)] = λ (θ_unit − θ_campus), where b is the difficulty each step had when it was answered and the small weight λ = 1 keeps a unit with few answers close to the campus. Personal twins are not averaged for this, because a twin built from a few answers reaches its owner's level only partly, and their average would shrink the differences between units. A figure broken down by unit, area or day is published only when it rests on at least ten people, following the principle of k-anonymity [10]. Units never receive numeric scores or a ranking: a unit appears in only one of three bands, above, level with or below the campus. It is shown above or below only when the difference exceeds 0.1 and its 95% confidence interval, which accounts for the answers of one person not being independent [15], lies entirely on one side of zero. The time and the unit of a single answer appear on no screen.
 
 The sky above the map is Isparta's real sky, with the actual positions of the sun and the moon and the current weather, while the snow on Mount Davraz, the pines and the rose gardens follow the season. The map also marks where cases are set and where events take place, shows the step the campus has found hardest lately among cases whose answers have been revealed, and offers a time bar for going back to earlier days. Every day the campus twin forecasts the number of answers the campus will give, from the mean of the last seven days and the mean of the same weekday over the last four weeks. The forecast is sealed in the same way as the personal predictions and is revealed and checked against the actual count when the day is over. The administration can open the campus page to visitors who have not signed in.
 
@@ -148,9 +148,9 @@ flowchart LR
         API["REST API"]
         TWIN["Digital twin<br/>Rasch probability · Elo update<br/>sealed predictions"]
         SCORE["Scoring and grading<br/>proper scoring rule · calibration"]
-        NEXT["Case selection<br/>spaced review · 65% target"]
+        NEXT["Case selection<br/>spaced review · 0.65 target"]
         BADGE["Badge<br/>levels · area levels · marks · medals"]
-        CAMPUS["Campus twin<br/>k-anonymous figures · daily sealed forecast"]
+        CAMPUS["Campus twin<br/>unit levels · k-anonymous figures<br/>daily sealed forecast"]
     end
     DB[("PostgreSQL 16<br/>identity · app · audit")]
     MAIL["University mail server<br/>one-time sign-in codes"]
@@ -171,6 +171,10 @@ flowchart LR
 ```
 
 The server is a FastAPI application in Python 3.12 that uses psycopg 3 to talk to PostgreSQL 16. The database keeps identities, the platform's data and the audit trail in separate schemas. The interface is a React 18 application built with esbuild into a single bundle. The platform runs in containers, and an automated test suite of more than 3,000 checks, including end-to-end tests in a real browser, accompanies every change.
+
+## Evaluation before deployment
+
+Before the platform was opened to real users, its rules were evaluated in a simulation environment that runs the platform's own scoring, estimation and selection code with synthetic users on a synthetic campus modelled on the university. The same synthetic users were also run through the real server, and the two gave identical results step by step. Several of the rules described above came out of this evaluation: the schedule of the difficulty rate, the error variance behind the halo, the alternating review, the reading of confidence that allows for the 50% floor, the step-level hint experiment and the estimation of units from all of their answers. A paper reporting the evaluation is in preparation. The simulation environment is not part of this repository.
 
 ## About this repository
 
@@ -196,7 +200,7 @@ If you refer to the platform, please cite it as follows. A machine-readable cita
   title     = {{AI Literacy Digital Twin: A Case-Based AI Literacy Platform with Personal and Campus Digital Twins}},
   year      = {2026},
   month     = oct,
-  version   = {1.0.0},
+  version   = {1.1.0},
   publisher = {GitHub},
   url       = {https://github.com/utkukose/AI-Literacy-Digital-Twin}
 }
@@ -230,6 +234,10 @@ If you refer to the platform, please cite it as follows. A machine-readable cita
 
 [13] Köse, U. (2026). *Yapay Zekâ Okuryazarlığı Eğitimi*. SDÜ Süleyman Demirel Üniversitesi Uzaktan Eğitim Uygulama ve Araştırma Merkezi. https://uzem.sdu.edu.tr/tr/haber/yapay-zek-okuryazarligi-egitimi-erisime-acildi-62530h.html
 
+[14] Glickman, M. E. (1999). Parameter estimation in large dynamic paired comparison experiments. *Journal of the Royal Statistical Society: Series C (Applied Statistics)*, *48*(3), 377–394. https://doi.org/10.1111/1467-9876.00159
+
+[15] Liang, K.-Y., & Zeger, S. L. (1986). Longitudinal data analysis using generalized linear models. *Biometrika*, *73*(1), 13–22. https://doi.org/10.1093/biomet/73.1.13
+
 ## Acknowledgements
 
 The platform was developed for the AI Application and Research Center (YAZEM) of Süleyman Demirel University. The developers thank Süleyman Demirel University for its support of YAZEM's work on AI literacy on campus.
@@ -247,7 +255,7 @@ The platform was developed for the AI Application and Research Center (YAZEM) of
 
 ## Genel bakış
 
-AI Literacy Digital Twin, bir üniversite kampüsünün yapay zekâ okuryazarlığını gerçekçi vakalar üzerinden ölçen ve geliştiren bir web platformudur. Platform, Isparta'daki Süleyman Demirel Üniversitesi (SDÜ) Yapay Zekâ Uygulama ve Araştırma Merkezi (YAZEM) için geliştirilmiştir ve öğrencilere, akademik personele ve idari personele birlikte seslenmektedir. Arayüz Türkçe ve İngilizce olarak kullanılabilir.
+AI Literacy Digital Twin, bir üniversite kampüsünün yapay zekâ okuryazarlığını gerçekçi vakalar üzerinden ölçen ve geliştiren bir web platformudur. Platform, Isparta'daki Süleyman Demirel Üniversitesi (SDÜ) Yapay Zeka Uygulama ve Araştırma Merkezi (YAZEM) için geliştirilmiştir ve öğrencilere, akademik personele ve idari personele birlikte seslenmektedir. Arayüz Türkçe ve İngilizce olarak kullanılabilir.
 
 Kullanıcılar kampüsteki gündelik hayattan ve çalışma hayatından alınmış vakaları çözer. Bir sohbet modelinin yazdığı kaynakçayı denetlemek, bir yapay zekâ aracıyla neyin paylaşılabileceğine karar vermek ya da taklit edilmiş bir sesi tanımak bu vakalara örnektir. Her cevap kullanıcının dijital ikizini günceller. Dijital ikiz, kullanıcının yapay zekâ okuryazarlığının yedi alanındaki yetkinliğini ve bu tahminlerin her birinin belirsizliğini izleyen bir modeldir. İkiz her adımdan önce kullanıcının o adımı doğru çözme olasılığını tahmin eder ve bu tahmini kriptografik bir özetle mühürler. Böylece tahminin cevaptan önce yapıldığını herkes sonradan doğrulayabilir. İkiz ardından öğrendiklerine göre sıradaki vakayı seçer. Kullanıcıların ikizleri bir araya gelerek kampüs ikizini oluşturur. Kampüs ikizi, canlı bir kampüs haritasında kampüsün her alanda nerede durduğunu kimseyi tek başına görünür kılmadan göstermektedir.
 
@@ -292,7 +300,7 @@ Cevap geldiğinde ikiz, kısmen doğru cevapları da hesaba katan ve 0 ile 1 ara
 
 $$\theta \leftarrow \theta + K\,(x - P), \qquad b \leftarrow b - K_b\,(x - P)$$
 
-Öğrenme katsayısı K, kullanıcının bir alandaki ilk on cevabında 0,40, sonrasında 0,15'tir. Böylece ikiz kullanıcıyı az tanırken hızlı, tanıdıkça daha temkinli öğrenir. Zorluk için kullanılan K_b = 0,05 · 30 / (30 + n) katsayısı, adım n kez cevaplandıkça küçülür ve zorluk vakanın her çeşidi için ayrı tutulur. Bir tahminin belirsizliği, Rasch modelinin standart hatasıyla, SH = 1 / √(1 + Σ p(1 − p)) olarak hesaplanır. Gül grafiği her yaprağın çevresinde θ ± 1,28 SH aralığını açık renkli bir hâle olarak gösterir. Bu aralık gerçek yetkinliği beş durumdan dördünde kapsamaktadır.
+Öğrenme katsayısı K, kullanıcının bir alandaki ilk on cevabında 0,40, sonrasında 0,15'tir. Böylece ikiz kullanıcıyı az tanırken hızlı, tanıdıkça daha temkinli öğrenir. Zorluk için kullanılan K_b = 0,30 · 20 / (20 + n) katsayısı yeni bir adımda 0,30'dan başlar ve adım 20 kez cevaplandığında yarıya iner. Zorluk vakanın her çeşidi için ayrı tutulur. Bir tahminin belirsizliği, Elo kestiriminin hata varyansıyla (V) ifade edilir. V 1'den başlar ve her cevapta V ← (1 − K w)² V + K² w + η kuralıyla güncellenir. Burada w = P(1 − P)'dir. Küçük η = 0,008 terimi ise Glicko sisteminde olduğu gibi pratikle değişen yetkinliğe pay bırakır [14]. Gül grafiği her yaprağın çevresinde θ ± 1,28 √V aralığını açık renkli bir hâle olarak gösterir. Bu aralık gerçek yetkinliği beş durumdan dördünde kapsayacak biçimde tasarlanmıştır.
 
 ## Güven, puan ve kalibrasyon
 
@@ -302,7 +310,7 @@ $$\text{puan} = v \cdot \left(1 - 4\,(c - s)^2\right)$$
 
 Burada v adımın değeri, c belirtilen güvendir. s ise sonuç 0,8 olan başarı eşiğine ulaştığında 1, ulaşmadığında 0 değerini alır. %50 güvenle verilen bir cevap ne puan kazandırır ne de kaybettirir, çok emin olup yanılmak ise adımın değerinden fazla puan kaybettirir. Bu nedenle başkasından alınmış bir cevabı tekrarlamak kazançlı değildir.
 
-Kalibrasyon, son 30 adımın ortalaması alınan Brier puanıyla, (c − s)² olarak ölçülür [4]. İkiz ekranı kullanıcının Brier puanını ikizinkiyle yan yana koyar ve Murphy ayrıştırmasıyla güvenilirlik, çözünürlük ve belirsizlik bileşenlerine böler [5]. ROC eğrisi altında kalan alan (AUROC) ise belirtilen güvenin doğru cevapları yanlışlardan ne kadar iyi ayırdığını gösterir ve üstbilişsel duyarlılığın yerleşik bir ölçüsüdür [7]. Puan, seviyeden ve rozetten ayrı tutulmaktadır. Seviye ve rozet yalnızca ikizin ölçtüğü yetkinliğe bağlıdır.
+Kalibrasyon, son 30 adımın ortalaması alınan Brier puanıyla, (c − s)² olarak ölçülür [4]. İkiz ekranı kullanıcının Brier puanını ikizinkiyle yan yana koyar ve Murphy ayrıştırmasıyla güvenilirlik, çözünürlük ve belirsizlik bileşenlerine böler [5]. Bu karşılaştırma için ikizin mühürlü tahmini, yani kısmi puanı da içeren beklenen sonuç, q = (k + 20 P) / (n + 20) ile tam başarı olasılığına çevrilir. Burada n, aynı türden olup mühürlü tahmini aynı onluk dilime düşen adımların kampüsteki sayısı, k de bunlardan tam doğru cevaplananların sayısıdır. Kullanıcının seçebileceği en düşük güven olan %50 “bilmiyorum” anlamına geldiğinden, güveni isabetle karşılaştıran ayna grafiği aşırı güveni yalnızca %50'nin üzerindeki beyanlardan okur. ROC eğrisi altında kalan alan (AUROC) ise belirtilen güvenin doğru cevapları yanlışlardan ne kadar iyi ayırdığını gösterir ve üstbilişsel duyarlılığın yerleşik bir ölçüsüdür [7]. Puan, seviyeden ve rozetten ayrı tutulmaktadır. Seviye ve rozet yalnızca ikizin ölçtüğü yetkinliğe bağlıdır.
 
 ## Mühürlü tahmin
 
@@ -310,11 +318,11 @@ Her adım ekrana gelirken ikiz, doğru cevap olasılığını hesaplar ve bunu S
 
 ## Sıradaki vakanın seçimi
 
-İkiz önce tekrar zamanı gelmiş bir alan olup olmadığına bakar. Başarı eşiğinin altında kalınan bir alan ertesi gün yeniden karşıya çıkar. Başarılı tekrarlarla aralık üç, yedi ve yirmi bir güne uzar. Bu düzen, öğrenme araştırmalarının en sağlam bulgularından birine dayanmaktadır [8]. Tekrar zamanı gelmiş bir alan yoksa yönetimin öne çıkardığı alan, o da yoksa ikizin kullanıcıyı en az tanıdığı alan seçilir. Seçilen alanda başarı olasılığı %65'e en yakın olan vaka önerilir ve vaka kartında vakanın neden seçildiği de yazar.
+Kullanıcı bir alan seçtiyse vaka o alandan gelir. Aksi durumda ikiz önce tekrar zamanı gelmiş bir alan olup olmadığına bakar. Başarı eşiğinin altında kalınan bir alan ertesi gün yeniden karşıya çıkar. Başarılı tekrarlarla aralık üç, yedi ve yirmi bir güne uzar. Bu düzen, öğrenme araştırmalarının en sağlam bulgularından birine dayanmaktadır [8]. Tekrarın bütün seçimleri belirlemesini önlemek için tekrar zamanı gelmiş alan yalnızca kullanıcının o ana kadar başladığı vaka sayısı çift olduğunda öne alınır, böylece tekrar seçimlerin en fazla yarısını belirler. Aksi durumda yönetimin öne çıkardığı alan, kullanıcı o alanda zaten güçlü değilse seçilir. O da yoksa ikizin kullanıcıyı en az tanıdığı alan seçilir. Seçilen alanda, vakanın o alandaki adımlarının ortalama zorluğundan hesaplanan beklenen sonucu (P) 0,65'e en yakın olan vaka önerilir ve vaka kartında vakanın neden seçildiği de yazar.
 
 ## İpucu ve platformun içindeki deney
 
-Bir adım için mühürlenen tahmin %45'in altında kaldığında, adımdan önce adımın türüne uygun bir strateji ipucu gösterilir. İpucu cevabı vermez. İpuçlarının işe yarayıp yaramadığı platformun içindeki seçkisiz bir deneyle sınanmaktadır: Kullanıcılar takma kimliklerine göre ipucu grubuna ya da karşılaştırma grubuna atanır, her kullanıcı için x − P değerlerinin ortalaması alınır ve iki grup arasındaki fark, her grupta en az 20 kullanıcı olduğunda %95 güven aralığıyla raporlanır. Bir alandaki güveni isabetinin belirgin biçimde üstünde kalan kullanıcı, yüksek bir güven düzeyi seçtiğinde kısa bir uyarı da görür.
+Bir adım için mühürlenen tahmin %45'in altında kaldığında, adımdan önce adımın türüne uygun bir strateji ipucu gösterilir. İpucu cevabı vermez. İpuçlarının işe yarayıp yaramadığı platformun içindeki seçkisiz bir deneyle sınanmaktadır: Uygun her adımda ipucunun gösterilip gösterilmeyeceği yazı tura atar gibi belirlenir ve bu karar adımın kaydıyla birlikte saklanır. Her kullanıcı için ipucu gösterilen ve gösterilmeyen uygun adımlardaki x − P değerlerinin ortalamaları arasındaki fark hesaplanır. Etki bu farkların kullanıcılar üzerinden ortalamasıdır ve her iki türden adımı olan en az 20 kullanıcı olduğunda %95 güven aralığıyla raporlanır. Her kullanıcı iki koşulu da yaşadığından ipucunun ikiz üzerindeki sonraki etkileri iki koşula eşit dağılır. Bir alanda %50'nin üzerindeki beyanlarında güveni isabetinin belirgin biçimde üstünde kalan kullanıcı, %80 ya da daha yüksek bir güven seçtiğinde kısa bir uyarı da görür.
 
 ## Rozet
 
@@ -322,7 +330,7 @@ Rozet, kullanıcının ilerlemesini dört parçada gösterir. Seviye (Başlangı
 
 ## Kampüs ikizi ve mahremiyet
 
-Kampüs haritası kampüsteki katılımı, kampüs ikizinin yedi alandaki durumunu ve her birimin kampüs ortalamasına göre konumunu göstermektedir. Birime, alana ya da güne göre ayrılmış bir bilgi, k-anonimlik ilkesine uygun olarak ancak en az on kişiye dayandığında yayımlanır [10]. Birimlere sayısal puan verilmez ve birimler sıralanmaz. Bir birim yalnızca üç gruptan birinde gösterilir: Kampüsün üstünde, kampüsle aynı düzeyde ya da kampüsün altında. Grup, ancak fark yetkinlik ölçeğinde 0,35'i aştığında değişir. Tek bir cevabın saati ve birimi hiçbir ekranda yer almaz.
+Kampüs haritası kampüsteki katılımı, kampüs ikizinin yedi alandaki durumunu ve her birimin kampüse göre konumunu göstermektedir. Bir birimin bir alandaki düzeyi, birimdeki kişilerin o alandaki bütün cevaplarından aynı Rasch modeliyle, Σ [x − σ(θ_birim − b)] = λ (θ_birim − θ_kampüs) eşitliğinin çözümüyle kestirilir. Burada b, adımın cevaplandığı andaki zorluğudur. λ = 1 ise az cevabı olan bir birimi kampüs düzeyine yakın tutan küçük bir ağırlıktır. Bunun için kişisel ikizlerin ortalaması alınmaz, çünkü az cevapla kurulan bir ikiz sahibinin düzeyine ancak kısmen yaklaşır ve ikizlerin ortalaması birimler arasındaki farkları olduğundan küçük gösterir. Birime, alana ya da güne göre ayrılmış bir bilgi, k-anonimlik ilkesine uygun olarak ancak en az on kişiye dayandığında yayımlanır [10]. Birimlere sayısal puan verilmez ve birimler sıralanmaz. Bir birim yalnızca üç gruptan birinde gösterilir: Kampüsün üstünde, kampüsle aynı düzeyde ya da kampüsün altında. Bir birim, fark 0,1'i aştığında ve aynı kişinin cevaplarının birbirinden bağımsız olmadığını hesaba katan %95 güven aralığı [15] bütünüyle sıfırın bir yanında kaldığında kampüsün üstünde ya da altında gösterilir. Tek bir cevabın saati ve birimi hiçbir ekranda yer almaz.
 
 Haritanın üstündeki gökyüzü Isparta'nın gerçek gökyüzüdür. Güneş'in ve Ay'ın konumu ile hava durumu gerçektir. Davraz'daki kar, çamlar ve gül bahçeleri ise mevsime göre değişir. Haritada vakaların geçtiği yerler ve etkinlikler işaretlidir, doğru cevapları açıklanmış vakalar arasında kampüsün son günlerde en çok zorlandığı adım gösterilir ve zaman çubuğuyla geçmiş günlere gidilebilir. Kampüs ikizi her gün, son yedi günün ortalamasından ve son dört haftada haftanın aynı gününün ortalamasından yararlanarak o gün kampüste kaç cevap verileceğini tahmin eder. Bu tahmin de kişisel tahminler gibi mühürlenir, gün bittiğinde açıklanır ve gerçekleşen sayıyla karşılaştırılır. Yönetim, kampüs sayfasını giriş yapmamış ziyaretçilere de açabilir.
 
@@ -345,9 +353,9 @@ flowchart LR
         API["REST API"]
         TWIN["Dijital ikiz<br/>Rasch olasılığı · Elo güncellemesi<br/>mühürlü tahminler"]
         SCORE["Puanlama ve değerlendirme<br/>uygun puanlama kuralı · kalibrasyon"]
-        NEXT["Vaka seçimi<br/>aralıklı tekrar · %65 hedefi"]
+        NEXT["Vaka seçimi<br/>aralıklı tekrar · 0,65 hedefi"]
         BADGE["Rozet<br/>seviyeler · alan seviyeleri · işaretler · madalyalar"]
-        CAMPUS["Kampüs ikizi<br/>k-anonim bilgiler · mühürlü günlük tahmin"]
+        CAMPUS["Kampüs ikizi<br/>birim düzeyleri · k-anonim bilgiler<br/>mühürlü günlük tahmin"]
     end
     DB[("PostgreSQL 16<br/>identity · app · audit")]
     MAIL["Üniversite posta sunucusu<br/>tek kullanımlık giriş kodları"]
@@ -368,6 +376,10 @@ flowchart LR
 ```
 
 Sunucu, PostgreSQL 16 ile psycopg 3 üzerinden çalışan, Python 3.12 ile yazılmış bir FastAPI uygulamasıdır. Veritabanı kimlik bilgilerini, platformun verilerini ve denetim kayıtlarını ayrı şemalarda tutar. Arayüz, esbuild ile tek bir pakete derlenen bir React 18 uygulamasıdır. Platform konteynerlerde çalışmaktadır. Her değişiklik, gerçek bir tarayıcıda yürütülen uçtan uca testler dâhil 3.000'den fazla denetimden oluşan otomatik bir test paketiyle sınanır.
+
+## Kullanıma açılmadan önce yapılan değerlendirme
+
+Platformun kuralları, gerçek kullanıcılara açılmadan önce, platformun kendi puanlama, kestirim ve seçim kodunu sentetik kullanıcılarla ve üniversite örnek alınarak kurulmuş sentetik bir kampüsle çalıştıran bir simülasyon ortamında değerlendirilmiştir. Aynı sentetik kullanıcılar gerçek sunucu üzerinden de çalıştırılmış ve iki ortam adım adım aynı sonucu vermiştir. Yukarıda anlatılan kuralların bir bölümü bu değerlendirmenin sonucunda belirlenmiştir: Zorluk katsayısının düzeni, hâlenin dayandığı hata varyansı, sırayla öne alınan tekrar, güven beyanlarının %50 tabanını hesaba katan okunuşu, adım düzeyindeki ipucu deneyi ve birimlerin bütün cevaplarından kestirilmesi. Değerlendirmeyi anlatan bir makale hazırlanmaktadır. Simülasyon ortamı bu depoda yer almaz.
 
 ## Bu depo hakkında
 
@@ -393,7 +405,7 @@ Kaynakların tam listesi İngilizce bölümdeki [References](#references) başl�
 
 ## Teşekkür
 
-Platform, Süleyman Demirel Üniversitesi Yapay Zekâ Uygulama ve Araştırma Merkezi (YAZEM) için geliştirilmiştir. Geliştiriciler, YAZEM'in kampüste yapay zekâ okuryazarlığına yönelik çalışmalarına verdiği destek için Süleyman Demirel Üniversitesi'ne teşekkür eder.
+Platform, Süleyman Demirel Üniversitesi Yapay Zeka Uygulama ve Araştırma Merkezi (YAZEM) için geliştirilmiştir. Geliştiriciler, YAZEM'in kampüste yapay zekâ okuryazarlığına yönelik çalışmalarına verdiği destek için Süleyman Demirel Üniversitesi'ne teşekkür eder.
 
 ---
 

@@ -31,9 +31,12 @@ K_LATE = 0.15
 EARLY_ATTEMPTS = 10
 
 # Difficulty learning rate, decaying with the number of observations so that a
-# well-used step settles.
-K_DIFFICULTY_BASE = 0.05
-K_DIFFICULTY_HALFLIFE = 30
+# well-used step settles: 0.30 for a step nobody has answered, half that after
+# twenty answers, and under 0.01 past six hundred. A slower start left the
+# estimates bunched near zero for most of a term, about half as spread out as
+# the steps really are, and so the twin's predictions near 50% for everyone.
+K_DIFFICULTY_BASE = 0.30
+K_DIFFICULTY_HALFLIFE = 20
 
 # Target success probability when selecting the next case: hard enough to be
 # informative, easy enough to stay worth finishing.
@@ -43,6 +46,15 @@ TARGET_P = 0.65
 ARCHIVE_POINT_RATIO = 0.30
 
 CALIBRATION_WINDOW = 30
+
+# The halo around each area of the twin is the error of the estimate, carried
+# along with it. A step with sealed prediction p, answered at rate K, keeps
+# (1 - K p(1-p))^2 of the error variance there was and adds K^2 p(1-p) of its
+# own; HALO_DRIFT is added at every step as well, because a person's ability
+# moves while they practise, as a rating deviation grows between games
+# (Glickman, 1999). The variance starts at 1, one logit either way.
+HALO_PRIOR_VARIANCE = 1.0
+HALO_DRIFT = 0.008
 
 # An outcome at or above this counts as "got it right" when scoring confidence.
 # Partial credit still reaches theta in full; it is only the confidence question
@@ -72,6 +84,17 @@ def ability_rate(attempts: int) -> float:
 
 def difficulty_rate(observations: int) -> float:
     return K_DIFFICULTY_BASE * K_DIFFICULTY_HALFLIFE / (K_DIFFICULTY_HALFLIFE + observations)
+
+
+def halo_variance(predictions, start_attempts: int = 0,
+                  variance: float = HALO_PRIOR_VARIANCE) -> float:
+    """Error variance of an area's ability after these steps, in the order
+    they were answered. `start_attempts` steps came before them."""
+    for i, p in enumerate(predictions):
+        k = ability_rate(start_attempts + i)
+        w = p * (1.0 - p)
+        variance = (1.0 - k * w) ** 2 * variance + k * k * w + HALO_DRIFT
+    return variance
 
 
 @dataclass(frozen=True)

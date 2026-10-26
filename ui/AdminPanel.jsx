@@ -215,7 +215,7 @@ const L = {
     twinAccSteps: "Tahmin edilen adım", twinAccBrier: "Brier puanı", twinAccRel: "Kalibrasyon", twinAccRes: "Ayırt edicilik",
     twinAccUnc: "Belirsizlik",
     twinAccFew: "İkizin isabeti, en az {n} kişi cevap verdikten sonra hesaplanıyor.",
-    twinAccWhat: "İkiz, her adımın sonucunu adım gösterilirken tahmin ediyor ve tahmini mühürlüyor. Brier puanı bu tahminlerin isabetini ölçer: Sıfır kusursuz tahmin demek, 0,25 ise her adım için %50 demekle aynı.",
+    twinAccWhat: "İkiz, her adımın sonucunu adım gösterilirken tahmin ediyor ve tahmini mühürlüyor. Tahmin, kısmi puanı da içeren beklenen sonuçtur. Burada her tahmin, aynı türden ve benzer tahminle gösterilmiş adımların kampüste ne sıklıkla tam doğru cevaplandığına bakılarak tam doğru cevap olasılığına çevrilir. Brier puanı bu olasılıkların isabetini ölçer: Sıfır kusursuz tahmin demek, 0,25 ise her adım için %50 demekle aynı.",
     twinAccShow: "Kampüs haritasında herkese göster", twinAccHide: "Herkesten gizle",
     twinAccIsPublic: "Şu an herkes görüyor.", twinAccIsPrivate: "Şu an yalnızca yöneticiler görüyor.",
     // problem reports
@@ -302,13 +302,13 @@ const L = {
     focusNow: "Odak alanı {dim}, {until} tarihine kadar. Bu alanda henüz güçlü olmayan herkesin sıradaki vakası bu alandan gelir.",
     focusClear: "Odağı kaldır", focusSet: "Odak ayarlandı", focusCleared: "Odak kaldırıldı",
     hintHead: "İpucu deneyi",
-    hintWhat: "İkizin tahminine göre bir adım zor geçecekse, kişilerin rastgele seçilmiş yarısı o adımdan önce bir strateji ipucu görüyor. Ardından her kişi için sonucun mühürlü tahminden ne kadar iyi çıktığı hesaplanıyor ve iki grup bu farka göre karşılaştırılıyor.",
-    hintArm: { hint: "İpucu gösterilenler", control: "Gösterilmeyenler", open: "Deney dışı" },
-    hintGroup: "Grup", hintPeople: "Kişi", hintSteps: "Adım",
+    hintWhat: "İkizin tahminine göre zor geçecek her adımda, adımdan önce strateji ipucunun gösterilip gösterilmeyeceğine yazı tura ile karar veriliyor. Böylece aynı kişi hem ipuçlu hem ipucusuz adımlar çözüyor. Her kişi için ipuçlu adımlarda sonucun mühürlü tahminden ne kadar iyi çıktığı ipucusuz adımlardakiyle karşılaştırılıyor ve bu farklar kişiler üzerinden ortalanıyor.",
+    hintArm: { hint: "İpucu gösterilen adımlar", control: "Gösterilmeyen adımlar", open: "Deney dışı" },
+    hintGroup: "Koşul", hintPeople: "Kişi", hintSteps: "Adım",
     hintGain: "Beklenenden fark (yüzde puan)", hintHit: "Tam doğru",
     hintNone: "Henüz ipucu eşiğinin altına düşen bir adım yok.",
     hintDiff: "İpucunun etkisi {d} yüzde puan (%95 güven aralığı: {lo} ile {hi}).",
-    hintWait: "Etki, iki grupta da en az {n} kişi olunca hesaplanır.",
+    hintWait: "Etki, iki koşulda da adımı olan en az {n} kişi olunca hesaplanır. Şu an {p} kişi var.",
     hintRunning: "Deney sürüyor.", hintStopped: "Deney durdu, ipucu herkese gösteriliyor.",
     hintStop: "Deneyi durdur, herkese ipucu göster", hintStart: "Deneyi yeniden başlat",
     hintEthics: "Sonuçlar yayımlanacaksa etik kurul onayı gerekir.",
@@ -582,7 +582,7 @@ const L = {
     twinAccSteps: "Steps predicted", twinAccBrier: "Brier score", twinAccRel: "Calibration", twinAccRes: "Discrimination",
     twinAccUnc: "Uncertainty",
     twinAccFew: "Twin accuracy is computed once at least {n} people have answered.",
-    twinAccWhat: "The twin predicts each step's outcome when the step is shown and seals the prediction. The Brier score measures how accurate those predictions are: zero is a perfect forecast, and 0.25 is the same as saying 50% for every step.",
+    twinAccWhat: "The twin predicts each step's outcome when the step is shown and seals the prediction. The prediction is the expected outcome, partial credit included. Here each one is turned into a chance of being fully right from how often steps of the same kind, shown with a similar prediction, were fully right on campus. The Brier score measures how accurate those chances are: zero is a perfect forecast, and 0.25 is the same as saying 50% for every step.",
     twinAccShow: "Show everyone on the campus map", twinAccHide: "Hide from everyone",
     twinAccIsPublic: "Everyone can see it now.", twinAccIsPrivate: "Only administrators can see it now.",
     // problem reports
@@ -667,13 +667,13 @@ const L = {
     focusNow: "The focus is {dim} until {until}. Everyone not yet strong in it gets their next case from this area.",
     focusClear: "Lift the focus", focusSet: "Focus set", focusCleared: "Focus lifted",
     hintHead: "Tip experiment",
-    hintWhat: "When the twin expects a step to be missed, half of the people, chosen at random, see a strategy tip before it. For each person, how much better the result was than the sealed prediction is compared between the two groups.",
-    hintArm: { hint: "Shown tips", control: "Not shown", open: "Outside the experiment" },
-    hintGroup: "Group", hintPeople: "People", hintSteps: "Steps",
+    hintWhat: "Whenever the twin expects a step to go badly, a coin decides whether a strategy tip is shown before it, so the same person solves steps with and without tips. For each person, how much better than the sealed prediction the tipped steps went is compared with the other steps, and these differences are averaged over people.",
+    hintArm: { hint: "Steps with a tip", control: "Steps without", open: "Outside the experiment" },
+    hintGroup: "Condition", hintPeople: "People", hintSteps: "Steps",
     hintGain: "Above expectation (points)", hintHit: "Fully right",
     hintNone: "No step has fallen below the tip threshold yet.",
     hintDiff: "Effect of the tip: {d} points (95% interval {lo} to {hi}).",
-    hintWait: "The effect is computed once both groups have at least {n} people.",
+    hintWait: "The effect is computed once at least {n} people have steps in both conditions. There are {p} now.",
     hintRunning: "The experiment is running.", hintStopped: "The experiment is stopped; everyone sees the tips.",
     hintStop: "Stop the experiment, show tips to everyone", hintStart: "Restart the experiment",
     hintEthics: "Publishing the results requires ethics committee approval.",
@@ -4341,7 +4341,7 @@ const SAMPLE_LOOP = {
 };
 
 const SAMPLE_HINT = {
-  running: true, threshold: 0.45, min_people: 20,
+  running: true, threshold: 0.45, min_people: 20, pairs: 38,
   arms: { hint: { people: 46, steps: 131, gain: 0.052, hit_rate: 0.48 },
           control: { people: 44, steps: 127, gain: 0.011, hit_rate: 0.41 } },
   difference: { value: 0.041, low: -0.006, high: 0.088 },
@@ -5060,7 +5060,7 @@ function HintExperiment({ t, lang, offline }) {
       <p style={S.hintStrong} data-hint-result>
         {d ? t.hintDiff.replace("{d}", num(d.value)).replace("{lo}", num(d.low))
                .replace("{hi}", num(d.high))
-           : t.hintWait.replace("{n}", data.min_people)}
+           : t.hintWait.replace("{n}", data.min_people).replace("{p}", data.pairs ?? 0)}
       </p>
       <p style={S.note}>{t.hintEthics}</p>
       <div style={S.actions}>

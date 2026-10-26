@@ -151,6 +151,7 @@ const T = {
     likelyRange: "Büyük olasılıkla %{lo} ile %{hi} arasında.",
     stillLearning: "İkizin seni bu alanda henüz az tanıyor. Aralık bu yüzden geniş.",
     areaSure: "Bu alandaki {n} cevabında güvenin ortalama %{c}, tam doğru cevap oranın %{s}.",
+    areaSureAbove: "Bu alanda %50'nin üzerinde güven bildirdiğin {n} cevapta güvenin ortalama %{c}, tam doğru cevap oranın %{s}.",
     areaOver: "Burada kendine fazla güveniyorsun.",
     areaUnder: "Burada kendine gereğinden az güveniyorsun.",
     areaFine: "Güvenin isabetinle uyumlu.",
@@ -168,12 +169,13 @@ const T = {
     continueCase: "Devam et",
     allDone: "Sana açık bütün vakaları bitirdin. Yeni vakalar eklendikçe burada görünecek.",
     mirror: "Güven ve isabet",
-    mirrorHelp: "Her sütun, o güven düzeyiyle verdiğin cevapların ne kadarının doğru çıktığını gösterir. Kısa çizgi, güveninle tam uyuşan isabet düzeyidir.",
+    mirrorHelp: "Her sütun, o güven düzeyiyle verdiğin cevapların ne kadarının doğru çıktığını gösterir. Kısa çizgi, güveninle tam uyuşan isabet düzeyidir. %50 seçebileceğin en düşük güvendir ve “bilmiyorum” anlamına gelir. Bu yüzden %50 sütununun düşük kalması aşırı güven sayılmaz.",
     mirrorFew: "Birkaç cevap daha verince grafik netleşecek.",
     mirrorOver: "Emin olduğun kadar isabetli değilsin.",
     mirrorUnder: "Sandığından daha isabetlisin.",
     mirrorFine: "Güvenin isabetinle uyuşuyor.",
     mirrorNums: "Ortalama güvenin %{c}, isabetin %{s}.",
+    mirrorNumsAbove: "%50'nin üzerinde güven bildirdiğin {n} cevapta ortalama güvenin %{c}, isabetin %{s}.",
     mirrorTipOver: "Emin olmadığında bunu söylemek puanını korur.",
     mirrorTipUnder: "Cevabını bildiğin adımlarda daha yüksek bir güven seçebilirsin.",
     brierLine: "Kendini tanıma puanın {b}. Sıfır kusursuz demek, 0,25 ise yazı tura atmakla aynı.",
@@ -231,9 +233,9 @@ const T = {
     whoTwinWins: "İkizin, cevaplarını senden daha isabetli tahmin ediyor.",
     whoYouWin: "Kendi cevaplarını ikizinden daha isabetli tahmin ediyorsun.",
     whoTie: "Sen de ikizin de cevaplarını aynı isabetle tahmin ediyorsunuz.",
-    whoScale: "Brier puanı: Sıfır kusursuz tahmin demek, 0,25 ise her adım için %50 demekle aynı. Kısa çubuk daha iyi.",
+    whoScale: "Brier puanı: Sıfır kusursuz tahmin demek, 0,25 ise her adım için %50 demekle aynı. Kısa çubuk daha iyi. İkizinin tahmini, kampüste benzer adımların ne sıklıkla tam doğru cevaplandığına bakılarak tam doğru cevap olasılığına çevrilir ve senin seçebildiğin %50–%90 aralığında karşılaştırılır.",
     whoParts: "Puanın nelerden oluşuyor?",
-    partRel: "Kalibrasyon", partRelHelp: "Güveninle isabetin arasındaki fark. Sıfıra ne kadar yakınsa o kadar iyi.",
+    partRel: "Kalibrasyon", partRelHelp: "Güveninle isabetin arasındaki fark. Sıfıra ne kadar yakınsa o kadar iyi. %50 en düşük seçenek olduğundan, o düzeyde isabetin daha düşük çıkması da bu farka eklenir.",
     partRes: "Ayırt edicilik", partResHelp: "Bildiğin ve bilmediğin adımlarda güvenini ne kadar farklı seçtiğin. Ne kadar yüksekse o kadar iyi.",
     partUnc: "Belirsizlik", partUncHelp: "Adımların sana göre zorluğu. Bu senin elinde değil.",
     aurocLine: "Güvenin, doğru cevaplarını yanlışlarından %{a} isabetle ayırıyor. %50, yazı tura atmakla aynı.",
@@ -269,7 +271,7 @@ const T = {
     reportStates: { open: "Alındı", fixed: "Düzeltildi", dismissed: "Gerek görülmedi" },
     reportNote: "Yönetimin notu",
     tipHead: "İpucu",
-    confNudge: "Bu alandaki son {n} cevabında güvenin ortalama %{c}, tam doğru cevap oranın %{s}. Güvenini bir kez daha düşünebilirsin.",
+    confNudge: "Bu alanda %50'nin üzerinde güvenle verdiğin son {n} cevapta güvenin ortalama %{c}, tam doğru cevap oranın %{s}. Güvenini bir kez daha düşünebilirsin.",
     whyReview: "Daha önce zorlandığın, tekrar zamanı gelen alan",
     whyFocus: "Kampüsün bu haftaki odağı",
 
@@ -445,6 +447,7 @@ const T = {
     likelyRange: "Most likely between {lo}% and {hi}%.",
     stillLearning: "Your twin knows little about this area yet, so the range is wide.",
     areaSure: "Over your {n} answers in this area your confidence averages {c}%, and {s}% were fully right.",
+    areaSureAbove: "Over the {n} answers in this area you gave with more than 50% confidence, your confidence averages {c}%, and {s}% were fully right.",
     areaOver: "Here you are more sure than your answers support.",
     areaUnder: "Here you know more than you think.",
     areaFine: "Your confidence matches your accuracy.",
@@ -463,12 +466,13 @@ const T = {
     continueCase: "Continue",
     allDone: "You have finished every case open to you. New ones will appear here.",
     mirror: "Confidence and accuracy",
-    mirrorHelp: "Each column shows how many of the answers you gave at that confidence were right. The short line is the accuracy that would match your confidence exactly.",
+    mirrorHelp: "Each column shows how many of the answers you gave at that confidence were right. The short line is the accuracy that would match your confidence exactly. 50% is the lowest confidence you can choose and means “I don't know”, so a low 50% column is not counted as overconfidence.",
     mirrorFew: "A few more answers and the chart will sharpen.",
     mirrorOver: "You are not as accurate as you are sure.",
     mirrorUnder: "You seem less sure than you have reason to be.",
     mirrorFine: "Your confidence matches your accuracy.",
     mirrorNums: "Average confidence {c}%, accuracy {s}%.",
+    mirrorNumsAbove: "Over the {n} answers you gave with more than 50% confidence: average confidence {c}%, accuracy {s}%.",
     mirrorTipOver: "Saying you are unsure, when you are, protects your points.",
     mirrorTipUnder: "Where you know, you can choose a higher confidence.",
     brierLine: "Your self-knowledge score is {b}. Zero is perfect; 0.25 is a coin toss.",
@@ -523,9 +527,9 @@ const T = {
     whoTwinWins: "Your twin predicts your answers more accurately than you do.",
     whoYouWin: "You predict your own answers more accurately than your twin.",
     whoTie: "You and your twin predict your answers equally well.",
-    whoScale: "Brier score: zero is a perfect forecast, and 0.25 is the same as saying 50% for every step. A shorter bar is better.",
+    whoScale: "Brier score: zero is a perfect forecast, and 0.25 is the same as saying 50% for every step. A shorter bar is better. Your twin's prediction is turned into a chance of being fully right from how often similar steps were fully right on campus, and compared within the 50–90% range you can choose from.",
     whoParts: "What your score is made of",
-    partRel: "Calibration", partRelHelp: "How far your confidence sits from your accuracy; closer to zero is better.",
+    partRel: "Calibration", partRelHelp: "How far your confidence sits from your accuracy; closer to zero is better. Since 50% is the lowest option, a lower accuracy at that level adds to it too.",
     partRes: "Discrimination", partResHelp: "How differently you rate steps you know and steps you don't; higher is better.",
     partUnc: "Uncertainty", partUncHelp: "How hard the steps are for you; not in your hands.",
     aurocLine: "Your confidence tells your right answers from your wrong ones {a}% of the time. 50% is a coin toss.",
@@ -563,7 +567,7 @@ const T = {
     reportStates: { open: "Received", fixed: "Fixed", dismissed: "No change needed" },
     reportNote: "Note from the administrators",
     tipHead: "Tip",
-    confNudge: "Over your last {n} answers in this area your confidence averaged {c}%, and {s}% were fully right. You may want to think again about your confidence.",
+    confNudge: "Over your last {n} answers in this area given with more than 50% confidence, your confidence averaged {c}%, and {s}% were fully right. You may want to think again about your confidence.",
     whyReview: "Time for review, an area you found hard",
     whyFocus: "The campus focus this week",
 
@@ -1084,12 +1088,22 @@ export default function StudentApp({ lang: hostLang, onLang, embedded, themePref
    Each graded step brings the area's ability estimate (θ after the step) and
    the chance the twin gave beforehand of getting it right. The estimate is read
    as a chance of solving a step of average difficulty, σ(θ). Its uncertainty is
-   the Rasch standard error, 1/√(1 + Σ p(1−p)), where the 1 is the information of
-   the prior and each answer adds what its prediction could tell. The range
-   shown is θ ± 1.28 SE, which holds the estimate four times in five.
+   the error of the estimate carried along with it, as server/scoring.py
+   (halo_variance) computes it: a step with prediction p, answered at rate K,
+   keeps (1 − K p(1−p))² of the variance there was and adds K² p(1−p) of its
+   own, plus a small drift for the ability that moves while a person practises.
+   The variance starts at 1. The range shown is θ ± 1.28 SE, meant to hold the
+   person's ability four times in five.
    -------------------------------------------------------------------------- */
 
 const Z80 = 1.2816;
+const K_EARLY = 0.40, K_LATE = 0.15, EARLY_ATTEMPTS = 10;
+const HALO_PRIOR_VARIANCE = 1.0, HALO_DRIFT = 0.008;
+const haloStep = (v, p, attempts) => {
+  const k = attempts < EARLY_ATTEMPTS ? K_EARLY : K_LATE;
+  const w = p * (1 - p);
+  return (1 - k * w) ** 2 * v + k * k * w + HALO_DRIFT;
+};
 const clamp01 = (x) => Math.max(0, Math.min(1, x));
 const mean = (xs) => (xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null);
 const pctOf = (x) => Math.round(clamp01(x) * 100);
@@ -1100,13 +1114,12 @@ const fill = (s, vars) => Object.entries(vars).reduce(
 
 function twinModel(history, twin) {
   const by = Object.fromEntries(DIMS.map((d) => [d,
-    { theta: 0, n: 0, info: 0, beads: [], series: [] }]));
+    { theta: 0, n: 0, preds: [], beads: [], series: [] }]));
   for (const h of history ?? []) {
     const d = by[h.dimension];
     if (!d) continue;
-    const p = Number.isFinite(h.predicted) ? h.predicted : 0.5;
     d.n += 1;
-    d.info += p * (1 - p);
+    d.preds.push(Number.isFinite(h.predicted) ? h.predicted : 0.5);
     d.theta = h.theta;
     d.beads.push(h);
     d.series.push(h.theta);
@@ -1114,13 +1127,18 @@ function twinModel(history, twin) {
   for (const key of DIMS) {
     const d = by[key];
     const known = twin?.[key];
-    // The stored twin is the authority on θ. When it holds answers the history
-    // does not (an import, say), their information is estimated from the count.
+    // The stored twin is the authority on θ. Answers it holds that the history
+    // does not (an import, say) came first, each taken at the 65% chance cases
+    // are chosen at.
+    let earlier = 0;
     if (known) {
       d.theta = known.theta;
-      if (known.n > d.n) { d.info += (known.n - d.n) * 0.22; d.n = known.n; }
+      if (known.n > d.n) { earlier = known.n - d.n; d.n = known.n; }
     }
-    d.se = 1 / Math.sqrt(1 + d.info);
+    let v = HALO_PRIOR_VARIANCE;
+    for (let i = 0; i < earlier; i += 1) v = haloStep(v, 0.65, i);
+    d.preds.forEach((p, i) => { v = haloStep(v, p, earlier + i); });
+    d.se = Math.sqrt(v);
     d.p = sigmoid(d.theta);
     d.lo = sigmoid(d.theta - Z80 * d.se);
     d.hi = sigmoid(d.theta + Z80 * d.se);
@@ -1686,11 +1704,12 @@ function AreaDetail({ t, lang, dim, model, onClose, onStart, findInArea }) {
   const recent = d.beads.slice(-4).reverse();
   // Stated confidence against success in this area alone, once there are
   // enough answers for the gap to mean something.
+  // As in the mirror, answers at 50% are not read as overconfidence.
   const scored = d.beads.filter((h) => h.confidence != null);
-  const meanConf = mean(scored.map((h) => h.confidence));
-  const hitRate = mean(scored.map((h) => (h.outcome >= SUCCESS_THRESHOLD ? 1 : 0)));
-  const sure = scored.length < AREA_SURE_MIN ? null
-    : meanConf - hitRate > 0.08 ? "areaOver" : meanConf - hitRate < -0.08 ? "areaUnder" : "areaFine";
+  const { verdict: areaVerdict, basis, above } = confidenceVerdict(scored, AREA_SURE_MIN);
+  const meanConf = mean(basis.map((h) => h.confidence));
+  const hitRate = mean(basis.map(hitOf));
+  const sure = areaVerdict && { over: "areaOver", under: "areaUnder", fine: "areaFine" }[areaVerdict];
   return (
     <div style={S.detail} data-area-detail={dim}>
       <div style={S.detailHead}>
@@ -1707,7 +1726,8 @@ function AreaDetail({ t, lang, dim, model, onClose, onStart, findInArea }) {
           {d.se > 0.55 && <p style={S.help}>{t.stillLearning}</p>}
           {sure && (
             <p style={S.help} data-area-confidence={sure}>
-              {fill(t.areaSure, { n: scored.length, c: pctOf(meanConf), s: pctOf(hitRate) })}{" "}
+              {fill(above ? t.areaSureAbove : t.areaSure,
+                { n: basis.length, c: pctOf(meanConf), s: pctOf(hitRate) })}{" "}
               <strong style={S.strong}>{t[sure]}</strong>
             </p>
           )}
@@ -2141,7 +2161,28 @@ function Replay({ t, lang, history, at: k, setAt }) {
 /* --------------------------------- mirror --------------------------------- */
 
 /* A reliability diagram: for each confidence a person can state, how often
-   answers given with it were right. */
+   answers given with it were right.
+
+   50% is the lowest confidence on offer and stands for "I don't know", so a
+   step a person expects to miss is answered with it. Answers given at 50% are
+   therefore never read as overconfidence, however they turn out: whether a
+   person is surer than their results is judged on the answers given above it.
+   Underconfidence can show at any level, 50% included. */
+const ABOVE_FLOOR = 0.55;
+const hitOf = (h) => (h.outcome >= SUCCESS_THRESHOLD ? 1 : 0);
+const sureGap = (xs) => mean(xs.map((h) => h.confidence - hitOf(h)));
+
+/* over, under or fine, with the answers the verdict was read from. */
+function confidenceVerdict(scored, min) {
+  if (scored.length < min) return { verdict: null, basis: scored, above: false };
+  const above = scored.filter((h) => h.confidence >= ABOVE_FLOOR);
+  if (above.length >= min && sureGap(above) > 0.08) return { verdict: "over", basis: above, above: true };
+  if (sureGap(scored) < -0.08) return { verdict: "under", basis: scored, above: false };
+  return above.length >= min
+    ? { verdict: "fine", basis: above, above: true }
+    : { verdict: "fine", basis: scored, above: false };
+}
+
 function Mirror({ t, lang, history, calib }) {
   const scored = history.filter((h) => h.confidence != null);
   const bins = CONFIDENCE.map((c) => {
@@ -2150,10 +2191,9 @@ function Mirror({ t, lang, history, calib }) {
     const right = here.filter((h) => h.outcome >= SUCCESS_THRESHOLD).length;
     return { c, n: here.length, rate: here.length ? right / here.length : null };
   });
-  const meanC = mean(scored.map((h) => h.confidence));
-  const meanS = mean(scored.map((h) => (h.outcome >= SUCCESS_THRESHOLD ? 1 : 0)));
-  const gap = meanC != null ? meanC - meanS : 0;
-  const verdict = scored.length < 6 ? null : gap > 0.08 ? "over" : gap < -0.08 ? "under" : "fine";
+  const { verdict, basis, above } = confidenceVerdict(scored, 6);
+  const meanC = mean(basis.map((h) => h.confidence));
+  const meanS = mean(basis.map(hitOf));
 
   const W = 320, H = 178, L = 38, R = 8, TOP = 12, BOT = 138;
   const col = (W - L - R) / bins.length;
@@ -2177,7 +2217,9 @@ function Mirror({ t, lang, history, calib }) {
           const cx = x + col / 2;
           const enough = b.n >= 3;
           const off = b.rate == null ? 0 : b.c - b.rate;
-          const colour = !enough ? "var(--line)" : off > 0.12 ? ACCENT : off < -0.12 ? AMBER : "var(--text-2)";
+          // A low column at 50% is the floor of the scale, not overconfidence.
+          const colour = !enough ? "var(--line)"
+            : off > 0.12 && b.c >= ABOVE_FLOOR ? ACCENT : off < -0.12 ? AMBER : "var(--text-2)";
           return (
             <g key={b.c}>
               {b.rate != null && (
@@ -2203,7 +2245,8 @@ function Mirror({ t, lang, history, calib }) {
             {t[{ over: "mirrorOver", under: "mirrorUnder", fine: "mirrorFine" }[verdict]]}
           </p>
           <p style={{ ...S.body, margin: 0 }}>
-            {fill(t.mirrorNums, { c: pctOf(meanC), s: pctOf(meanS) })}
+            {fill(above ? t.mirrorNumsAbove : t.mirrorNums,
+              { n: basis.length, c: pctOf(meanC), s: pctOf(meanS) })}
             {verdict === "over" ? ` ${t.mirrorTipOver}` : verdict === "under" ? ` ${t.mirrorTipUnder}` : ""}
           </p>
         </>
@@ -2268,7 +2311,13 @@ function calibrationOf(f, o, edges) {
 }
 
 /* The person's own confidence against the twin's sealed predictions, on the
-   same answers. */
+   same answers and the same event. The twin predicts the graded outcome; the
+   server reads each prediction as a chance of being fully right from how often
+   steps of its kind sealed near it were fully right on campus. That chance is
+   then held to the 50–90% a person can choose from, so neither side is scored
+   on a scale the other does not have. */
+const twinChance = (h) => Math.min(0.9, Math.max(0.5, h.success_chance ?? h.predicted));
+
 function WhoKnows({ t, lang, history }) {
   const paired = history.filter((h) => h.confidence != null && h.predicted != null);
   if (paired.length < WHO_MIN) {
@@ -2281,7 +2330,7 @@ function WhoKnows({ t, lang, history }) {
   }
   const hit = paired.map((h) => (h.outcome >= SUCCESS_THRESHOLD ? 1 : 0));
   const self = calibrationOf(paired.map((h) => h.confidence), hit, CONF_EDGES);
-  const twinBrier = mean(paired.map((h, i) => (h.predicted - hit[i]) ** 2));
+  const twinBrier = mean(paired.map((h, i) => (twinChance(h) - hit[i]) ** 2));
   const diff = self.brier - twinBrier;
   const verdict = Math.abs(diff) < 0.01 ? "whoTie" : diff > 0 ? "whoTwinWins" : "whoYouWin";
   const rows = [[t.whoYou, self.brier, TEXT], [t.whoTwin, twinBrier, ACCENT]];
@@ -4276,8 +4325,9 @@ function CaseRunner({ t, lang, caseDef, twin, history, offline, onResult, before
 const NUDGE_MIN = 6, NUDGE_GAP = 0.15;
 function confidenceNudge(history, dimension, confidence) {
   if (!dimension || confidence == null || confidence < 0.8) return null;
-  const scored = (history ?? []).filter((h) => h.dimension === dimension && h.confidence != null)
-    .slice(-10);
+  // Answers given at 50% are left out, as in the mirror: they say "I don't know".
+  const scored = (history ?? []).filter((h) => h.dimension === dimension
+    && h.confidence != null && h.confidence >= ABOVE_FLOOR).slice(-10);
   if (scored.length < NUDGE_MIN) return null;
   const c = mean(scored.map((h) => h.confidence));
   const hit = mean(scored.map((h) => (h.outcome >= SUCCESS_THRESHOLD ? 1 : 0)));

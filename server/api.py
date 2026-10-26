@@ -50,6 +50,8 @@ import public_campus
 import storage
 import scoring
 import service
+import success_map
+import unit_levels
 import suspensions
 import tips
 import validate_case
@@ -634,10 +636,18 @@ def twin_history(user: Principal = Depends(current_user),
                                            exact=True).body["title"]
             except (cl.CaseNotFound, KeyError):
                 pass
+    # The twin's prediction is of the graded outcome; beside it, the chance of
+    # a success the campus record gives it, the event a confidence is about.
+    cells, kinds = success_map.current(conn, CASE_ROOT)
+    missing = {r[6] for r in rows if (r[6], r[7]) not in kinds}
+    if missing:
+        kinds = {**kinds, **success_map.step_kinds(conn, CASE_ROOT, missing)}
     return {"steps": [
         {"dimension": r[0], "at": r[1].isoformat(), "theta": r[2], "outcome": r[3],
          "confidence": r[4], "predicted": r[5], "case": r[6], "step": r[7],
-         "title": titles[r[6]]}
+         "title": titles[r[6]],
+         "success_chance": (None if r[5] is None else
+                            round(success_map.chance(cells, kinds.get((r[6], r[7])), r[5]), 4))}
         for r in rows
     ]}
 
@@ -1527,13 +1537,13 @@ def _with_seal(conn: psycopg.Connection, step: dict, attempt_id: int,
     return step
 
 
-def _hint_arm(conn: psycopg.Connection, pseudonym: str) -> str:
-    """Hints for everyone, or, while the experiment runs, for half of the people,
-    chosen once and for good from the pseudonym."""
+def _hint_arm(conn: psycopg.Connection) -> str:
+    """Hints for everyone, or, while the experiment runs, a coin for each
+    eligible step. The same person meets both conditions, so whatever a tip does
+    to their twin afterwards falls on both alike."""
     if not _setting(conn, "hint_experiment", True):
         return "open"
-    digest = hashlib.sha256(f"{pseudonym}:hint".encode()).digest()
-    return "hint" if digest[0] % 2 == 0 else "control"
+    return "hint" if secrets.randbelow(2) == 0 else "control"
 
 
 def _tip_for(conn: psycopg.Connection, step: dict, attempt_id: int,
@@ -1546,12 +1556,15 @@ def _tip_for(conn: psycopg.Connection, step: dict, attempt_id: int,
         " WHERE a.id = %s", (step["step_key"], attempt_id)).fetchone()
     if row is None:
         return None
-    arm = _hint_arm(conn, user.pseudonym)
+    # The coin is tossed once; a reload or a second device reads it back.
     conn.execute(
         "INSERT INTO app.hint_exposure (attempt_id, case_step_id, arm, p_sealed)"
         " VALUES (%s, %s, %s, %s) ON CONFLICT DO NOTHING",
-        (attempt_id, row[0], arm, p))
+        (attempt_id, row[0], _hint_arm(conn), p))
     conn.commit()
+    arm = conn.execute(
+        "SELECT arm FROM app.hint_exposure WHERE attempt_id = %s AND case_step_id = %s",
+        (attempt_id, row[0])).fetchone()[0]
     return tips.tip(user.locale, step["kind"], row[1]) if arm != "control" else None
 
 
@@ -2359,8 +2372,7 @@ def visitor_unit_awareness(unit_id: int, response: Response) -> dict:
     if unit_id not in _known_units(response)[0]:
         raise HTTPException(404, "no such unit on the map")
     return _for_visitors("units", ("unit", unit_id), VISITOR_TTL["unit"],
-                         lambda conn: conn.execute("SELECT app.unit_awareness(%s)",
-                                                   (unit_id,)).fetchone()[0], response)
+                         lambda conn: _unit_awareness(conn, unit_id), response)
 
 
 @app.get("/public/board")
@@ -2797,30 +2809,75 @@ def unit_awareness(unit_id: int, user: Principal = Depends(current_user),
     No number and no rank. Two units in the same band cannot be put in an
     order, which is the whole reason the band has three values.
     """
-    row = conn.execute("SELECT app.unit_awareness(%s)", (unit_id,)).fetchone()[0]
-    return row
+    return _unit_awareness(conn, unit_id)
 
 
+def _unit_awareness(conn: psycopg.Connection, unit_id: int) -> dict:
+    """The bands rest on the units' levels, worked out again first when they
+    are older than a few minutes (unit_levels)."""
+    unit_levels.refresh(conn)
+    return conn.execute("SELECT app.unit_awareness(%s)", (unit_id,)).fetchone()[0]
+
+
+# Per step and tenth of the sealed prediction, the sums the twin's accuracy is
+# put together from once each prediction is read as a chance of success.
 TWIN_ACCURACY_SQL = """
-SELECT width_bucket(sr.p_predicted, 0, 1, 10) AS k, count(*) AS n,
-       avg(sr.p_predicted) AS forecast,
-       avg((sr.outcome_x >= %(success)s)::int)::float8 AS hit_rate,
-       sum((sr.p_predicted - (sr.outcome_x >= %(success)s)::int) ^ 2) AS squared
+SELECT cr.case_key, cs.step_key, least(floor(sr.p_predicted * 10)::int, 9) AS tenth,
+       count(*) AS n, sum(sr.p_predicted) AS sp, sum(sr.p_predicted ^ 2) AS spp,
+       sum((sr.outcome_x >= %(success)s)::int) AS ss,
+       sum(sr.p_predicted * (sr.outcome_x >= %(success)s)::int) AS sps
 FROM app.step_result sr
+JOIN app.case_step cs ON cs.id = sr.case_step_id
+JOIN app.case_registry cr ON cr.id = cs.case_id
 JOIN app.attempt a ON a.id = sr.attempt_id
 JOIN app.person p ON p.id = a.person_id AND p.status = 'active'
-GROUP BY 1 ORDER BY 1
+WHERE sr.p_predicted IS NOT NULL
+GROUP BY 1, 2, 3
 """
 
+# Confidence against success per area, over every statement and over those
+# above 50%, which say more than "I don't know" (calibration.floor_aware).
 OVERCONFIDENCE_SQL = """
 SELECT sr.dimension::text AS dimension, count(DISTINCT a.person_id) AS people,
-       count(*) AS n, avg(sr.confidence_c) AS mean_confidence,
-       avg((sr.outcome_x >= %(success)s)::int)::float8 AS hit_rate
+       count(*) AS n, sum(sr.confidence_c) AS conf,
+       sum((sr.outcome_x >= %(success)s)::int) AS hits,
+       count(*) FILTER (WHERE sr.confidence_c > 0.5) AS n_above,
+       coalesce(sum(sr.confidence_c) FILTER (WHERE sr.confidence_c > 0.5), 0) AS conf_above,
+       coalesce(sum((sr.outcome_x >= %(success)s)::int)
+                FILTER (WHERE sr.confidence_c > 0.5), 0) AS hits_above
 FROM app.step_result sr JOIN app.attempt a ON a.id = sr.attempt_id
 JOIN app.person p ON p.id = a.person_id AND p.status = 'active'
 WHERE sr.confidence_c IS NOT NULL
 GROUP BY 1
 """
+
+
+def _mapped_accuracy(conn: psycopg.Connection, args: dict) -> dict | None:
+    """The twin's accuracy on success, each prediction P read through the
+    campus success map as q = A + B P; the sums per step and tenth give the
+    sum of q and of (q - s)^2 without fetching every answer. The bins are
+    tenths of q, each group of answers placed by its mean q, so that the
+    reliability diagram and the decomposition describe q itself."""
+    cells, kinds = success_map.current(conn, CASE_ROOT)
+    bins: dict[int, list[float]] = {}
+    squared = 0.0
+    for case_key, step_key, tenth, n, sp, spp, ss, sps in conn.execute(
+            TWIN_ACCURACY_SQL, args).fetchall():
+        big_n, big_k = cells.get((kinds.get((case_key, step_key)), tenth), (0, 0))
+        a = big_k / (big_n + success_map.PRIOR)
+        b = success_map.PRIOR / (big_n + success_map.PRIOR)
+        sp, spp, ss, sps = float(sp), float(spp), float(ss), float(sps)
+        squared += (n * a * a + b * b * spp + ss + 2 * a * b * sp
+                    - 2 * a * ss - 2 * b * sps)
+        row = bins.setdefault(min(int((a + b * sp / n) * 10), 9), [0, 0.0, 0.0])
+        row[0] += n
+        row[1] += n * a + b * sp
+        row[2] += ss
+    if not bins:
+        return None
+    return calib.from_bins([calib.Bin(low=k / 10, high=(k + 1) / 10, n=v[0],
+                                      forecast=v[1] / v[0], hit_rate=v[2] / v[0])
+                            for k, v in sorted(bins.items())], squared)
 
 
 @app.get("/twin/accuracy")
@@ -2847,21 +2904,20 @@ def _twin_accuracy(conn: psycopg.Connection, is_admin: bool) -> dict:
 
     twin = None
     if (public or is_admin) and people >= floor_n:
-        rows = conn.execute(TWIN_ACCURACY_SQL, args).fetchall()
-        bins = [calib.Bin(low=(min(k, 10) - 1) / 10, high=min(k, 10) / 10, n=n,
-                          forecast=float(f), hit_rate=float(h))
-                for k, n, f, h, _ in rows]
-        twin = calib.from_bins(bins, float(sum(r[4] for r in rows)))
+        twin = _mapped_accuracy(conn, args)
 
     areas = []
-    for dimension, area_people, n, mean_conf, hit in conn.execute(
+    for dimension, area_people, n, conf, hits, n_above, conf_above, hits_above in conn.execute(
             OVERCONFIDENCE_SQL, args).fetchall():
-        enough = area_people >= floor_n
+        basis = calib.floor_aware((n, float(conf), hits),
+                                  (n_above, float(conf_above), hits_above))
+        enough = area_people >= floor_n and basis is not None
+        mean_conf, hit, used = basis if enough else (None, None, None)
         areas.append({"dimension": dimension, "people": area_people, "enough": enough,
-                      "gap": float(mean_conf - hit) if enough else None,
-                      "confidence": round(float(mean_conf), 3) if enough else None,
-                      "hit": round(float(hit), 3) if enough else None,
-                      "n": n if enough else None})
+                      "gap": mean_conf - hit if enough else None,
+                      "confidence": round(mean_conf, 3) if enough else None,
+                      "hit": round(hit, 3) if enough else None,
+                      "n": used})
     return {"public": public, "threshold": floor_n, "people": people,
             "twin": twin, "areas": areas}
 

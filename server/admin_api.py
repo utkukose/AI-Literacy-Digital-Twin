@@ -1447,7 +1447,9 @@ def close_case_reports(case_key: str, body: ReportClose,
 # ---------------------------------------------------------------------------
 
 # An area counts as overconfident when stated confidence runs this far above
-# the share of fully right answers.
+# the share of fully right answers. Only statements above 50% count: 50% is the
+# lowest level on offer and stands for "I don't know", so the answers given
+# with it cannot show overconfidence.
 OVERCONFIDENT_GAP = 0.08
 # Fewer live cases than this in an area is too few to keep people supplied.
 FEW_CASES = 5
@@ -1471,7 +1473,7 @@ def interventions(admin: Admin = Depends(current_admin),
         "SELECT sr.dimension::text, count(DISTINCT a.person_id),"
         "       avg(sr.confidence_c)::float8, avg((sr.outcome_x >= %s)::int)::float8"
         " FROM app.step_result sr JOIN app.attempt a ON a.id = sr.attempt_id"
-        " WHERE sr.confidence_c IS NOT NULL GROUP BY 1",
+        " WHERE sr.confidence_c > 0.5 GROUP BY 1",
         (scoring.SUCCESS_THRESHOLD,)).fetchall()
     supply = dict(conn.execute(
         "SELECT cs.dimension::text, count(DISTINCT cr.id) FROM app.case_registry cr"
@@ -1537,11 +1539,13 @@ def hint_experiment(admin: Admin = Depends(current_admin),
                     conn: psycopg.Connection = Depends(db)) -> dict:
     """Whether tips before hard steps help.
 
-    Each person is in one arm for good, decided at random, and every eligible
-    step is recorded in both arms. How much better than expected a person did
-    is the result minus the sealed prediction, averaged over that person's
-    eligible steps; the arms are compared on these per-person means, since the
-    person is what was randomised.
+    A coin decides, for every eligible step, whether its tip is shown, so each
+    person meets both conditions. How much better than expected a step went is
+    the result minus the sealed prediction. For every person with steps in both
+    conditions the mean of the tipped steps minus the mean of the others is
+    taken, and the effect is the mean of these differences over people, with
+    its 95% interval. Comparing a person with themselves keeps out what a tip
+    does to the twin afterwards, which falls on both conditions alike.
     """
     rows = conn.execute(
         "SELECT he.arm, a.person_id, avg(sr.outcome_x - he.p_sealed)::float8,"
@@ -1552,32 +1556,33 @@ def hint_experiment(admin: Admin = Depends(current_admin),
         "  AND sr.case_step_id = he.case_step_id"
         " GROUP BY he.arm, a.person_id", (scoring.SUCCESS_THRESHOLD,)).fetchall()
     arms: dict[str, dict] = {}
-    for arm, _person, residual, hit, steps in rows:
+    by_person: dict[int, dict[str, float]] = {}
+    for arm, person, residual, hit, steps in rows:
         a = arms.setdefault(arm, {"people": 0, "steps": 0, "residuals": [], "hits": []})
         a["people"] += 1
         a["steps"] += steps
         a["residuals"].append(residual)
         a["hits"].append(hit)
+        by_person.setdefault(person, {})[arm] = residual
 
     def summary(a: dict) -> dict:
         n = len(a["residuals"])
-        mean = sum(a["residuals"]) / n
-        var = sum((x - mean) ** 2 for x in a["residuals"]) / (n - 1) if n > 1 else 0.0
-        return {"people": a["people"], "steps": a["steps"], "gain": mean, "var": var,
-                "hit_rate": sum(a["hits"]) / n}
+        return {"people": a["people"], "steps": a["steps"],
+                "gain": sum(a["residuals"]) / n, "hit_rate": sum(a["hits"]) / n}
 
     out = {name: summary(a) for name, a in arms.items()}
+    pairs = [g["hint"] - g["control"] for g in by_person.values()
+             if "hint" in g and "control" in g]
     difference = None
-    h, c = out.get("hint"), out.get("control")
-    if h and c and min(h["people"], c["people"]) >= EXPERIMENT_MIN_PEOPLE:
-        diff = h["gain"] - c["gain"]
-        se = (h["var"] / h["people"] + c["var"] / c["people"]) ** 0.5
+    if len(pairs) >= EXPERIMENT_MIN_PEOPLE:
+        diff = sum(pairs) / len(pairs)
+        var = sum((d - diff) ** 2 for d in pairs) / (len(pairs) - 1)
+        se = (var / len(pairs)) ** 0.5
         difference = {"value": diff, "low": diff - 1.96 * se, "high": diff + 1.96 * se}
-    for a in out.values():
-        a.pop("var")
     return {"running": bool(_setting_value(conn, "hint_experiment", True)),
             "threshold": float(_setting_value(conn, "hint_threshold", 0.45)),
-            "arms": out, "difference": difference, "min_people": EXPERIMENT_MIN_PEOPLE}
+            "arms": out, "pairs": len(pairs), "difference": difference,
+            "min_people": EXPERIMENT_MIN_PEOPLE}
 
 
 def _setting_value(conn: psycopg.Connection, key: str, default):

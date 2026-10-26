@@ -15,6 +15,7 @@ from datetime import date, timedelta
 
 import psycopg
 
+import calibration
 from validate_case import place_of
 
 # The spots the printed map marks without a number, in Turkish and English.
@@ -187,10 +188,13 @@ SELECT * FROM (
 """
 
 # Confidence beside the outcome, per area and day, over the answers that came
-# with a confidence.
+# with a confidence, and over those above 50% (calibration.floor_aware).
 CONFIDENCE_DAYS_SQL = """
 SELECT sr.dimension::text, (sr.answered_at AT TIME ZONE %(tz)s)::date AS day, count(*),
-       sum(sr.confidence_c), sum((sr.outcome_x >= %(success)s)::int)
+       sum(sr.confidence_c), sum((sr.outcome_x >= %(success)s)::int),
+       count(*) FILTER (WHERE sr.confidence_c > 0.5),
+       coalesce(sum(sr.confidence_c) FILTER (WHERE sr.confidence_c > 0.5), 0),
+       coalesce(sum((sr.outcome_x >= %(success)s)::int) FILTER (WHERE sr.confidence_c > 0.5), 0)
 FROM app.step_result sr
 JOIN app.attempt a ON a.id = sr.attempt_id
 JOIN app.person p ON p.id = a.person_id AND p.status = 'active'
@@ -255,24 +259,29 @@ def twin_history(conn: psycopg.Connection, tz: str, start: date, days: int,
     answers = dict.fromkeys(dims, 0)
     sure = dict.fromkeys(dims, 0.0)
     right = dict.fromkeys(dims, 0)
+    above = {d: [0, 0.0, 0] for d in dims}
     sayers = dict.fromkeys(dims, 0)
     sums = conn.execute(CONFIDENCE_DAYS_SQL, {"tz": tz, "success": success}).fetchall()
     firsts = conn.execute(CONFIDENCE_FIRST_SQL, {"tz": tz}).fetchall()
     i = j = 0
     for k, day in enumerate(day_of):
         while i < len(sums) and sums[i][1] <= day:
-            dim, _, n, c, h = sums[i]
+            dim, _, n, c, h, n_above, c_above, h_above = sums[i]
             answers[dim] += n
             sure[dim] += float(c)
             right[dim] += h
+            above[dim][0] += n_above
+            above[dim][1] += float(c_above)
+            above[dim][2] += h_above
             i += 1
         while j < len(firsts) and firsts[j][1] <= day:
             sayers[firsts[j][0]] += 1
             j += 1
         for d in dims:
             if sayers[d] >= floor_n and answers[d]:
-                confidence[d][k] = round(sure[d] / answers[d], 3)
-                hit[d][k] = round(right[d] / answers[d], 3)
+                basis = calibration.floor_aware((answers[d], sure[d], right[d]), tuple(above[d]))
+                confidence[d][k] = round(basis[0], 3)
+                hit[d][k] = round(basis[1], 3)
 
     forecast = [None] * days
     for day, value in conn.execute(

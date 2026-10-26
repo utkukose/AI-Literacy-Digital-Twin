@@ -60,6 +60,32 @@ class Profile:
         return self.mean_forecast - self.hit_rate
 
 
+# 50% is the lowest confidence a person can state and stands for "I don't
+# know": a step a person expects to miss is answered with it. Whether people
+# are surer than their results is therefore read from the statements above 50%
+# alone; whether they are less sure than their results, from all of them.
+FLOOR = 0.5
+VERDICT_GAP = 0.08
+VERDICT_MIN = 6
+
+
+def floor_aware(every: tuple, above: tuple) -> tuple[float, float, int] | None:
+    """The confidence, hit rate and number of answers a verdict on a set of
+    statements is read from. Each argument is (answers, sum of confidence,
+    answers fully right), over all statements and over those above 50%."""
+    n, conf, hits = every
+    n_above, conf_above, hits_above = above
+    if n_above >= VERDICT_MIN and (conf_above - hits_above) / n_above > VERDICT_GAP:
+        return conf_above / n_above, hits_above / n_above, n_above
+    if n and (conf - hits) / n < -VERDICT_GAP:
+        return conf / n, hits / n, n
+    if n_above >= VERDICT_MIN:
+        return conf_above / n_above, hits_above / n_above, n_above
+    if n:
+        return conf / n, hits / n, n
+    return None
+
+
 def brier(forecasts: list[float], outcomes: list[int]) -> float:
     return sum((f - o) ** 2 for f, o in zip(forecasts, outcomes)) / len(forecasts)
 

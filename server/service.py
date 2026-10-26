@@ -402,10 +402,18 @@ def next_case(conn: psycopg.Connection, person_id: int, role: str,
         # In order: the area asked for; an area due for review; the area the
         # campus is focusing on, unless this person is already strong in it;
         # and otherwise the area the twin knows least.
+        #
+        # A review leads every other case at most: only when the person has
+        # begun an even number of cases. Cases are chosen near a 65% chance of
+        # success, so a miss, and with it a review, follows most of them; left
+        # to itself the review list would choose almost every case, and the
+        # areas the twin knows least would wait.
         reason, target_dim = None, None
         if dimension is not None:
             reason, target_dim = "requested", dimension
-        if target_dim is None:
+        cur.execute("SELECT count(*) AS n FROM app.attempt WHERE person_id = %s", (person_id,))
+        review_turn = cur.fetchone()["n"] % 2 == 0
+        if target_dim is None and review_turn:
             cur.execute(
                 "SELECT dimension::text FROM app.review_due"
                 " WHERE person_id = %s AND due_at <= now() ORDER BY due_at", (person_id,))
